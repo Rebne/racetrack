@@ -12,6 +12,7 @@
                 for (let row = 0; row < 5; row++) {
                     for (let col = 0; col < 10; col++) {
                     const box = document.createElement('div');
+                    box.className = 'box';
                     box.style.width = '10%';
                     box.style.height = '20%';
                     box.style.backgroundColor = ((row + col) % 2 == 0) ? 'white' : 'black';
@@ -20,13 +21,26 @@
                 }
             }
 
-            createCheckeredFlag();
+            function removeCheckeredFlag () {
+                const elementsToRemove = document.querySelectorAll('.box');
+                if (elementsToRemove.length > 0) {
+                    elementsToRemove.forEach((box) => {
+                        box.remove();
+                    });
+                }
+            }
     
             // checkered flag (finished) has temp color for testing
             const flag_colors = new Map([['danger', 'red'], ['hazard', 'yellow'], ['none', 'white'],['finished', 'black']]);
 
             socket.on('safety:flag', (message) => {
-                flag.style.backgroundColor = flag_colors.get(message);
+                const color = flag_colors.get(message);
+                if (message == 'finished') {
+                    createCheckeredFlag();
+                } else {
+                    removeCheckeredFlag();
+                    flag.style.backgroundColor = flag_colors.get(message);
+                }
             });
         });
     </script>
@@ -38,6 +52,9 @@
             height: 100vh;
             display: flex;
             flex-wrap: wrap;
+        }
+        .hidden {
+            display: none;
         }
     </style>
   </head>
