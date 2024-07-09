@@ -11,13 +11,14 @@
             let index = 0;
      
             button.addEventListener('click', () => {
-                console.log("Button clicked");
                 // button clicks through all the messages (flags) for testing 
                 const message = safety_messages[index];
                 index++;
-                if (index > safety_messages.length) {
+                
+                if (index == safety_messages.length) {
                     index = 0;
                 }
+
                 socket.emit('safety:flag', message);
             });
 

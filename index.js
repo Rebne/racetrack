@@ -22,10 +22,11 @@ io.on('connection', (socket) => {
 
   console.log('a user connected');
 
-  socket.on('safety:flag', (color) => {
-    
-    //could not get socket.emit to emit to flag for some reason (io.emit works)
-    io.emit('flag:change', color);
+  //router
+  socket.onAny((eventName, data) => {
+    console.log(eventName);
+    console.log(data);
+    io.emit(eventName, data);
   });
 
   // for debugging (console logging all emits)
