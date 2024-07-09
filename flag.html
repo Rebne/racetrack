@@ -1,0 +1,30 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Race flags</title>
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const socket = io();
+            const flag = document.body;
+            // checkered flag is missing
+            const flag_colors = new Map([['danger', 'red'], ['hazard', 'yellow'], ['none', 'white']]);
+
+            socket.on('flag:change', (message) => {
+                flag.style.backgroundColor = flag_colors.get(message);
+            });
+        });
+    </script>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            background-color: grey;
+        }
+    </style>
+  </head>
+  <body>
+  </body>
+</html>

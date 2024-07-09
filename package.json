@@ -1,0 +1,10 @@
+{
+  "name": "racetrack",
+  "version": "0.0.1",
+  "description": "MVP for racetrack",
+  "type": "module",
+  "dependencies": {
+    "express": "^4.19.2",
+    "socket.io": "^4.7.5"
+  }
+}

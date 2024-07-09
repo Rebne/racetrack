@@ -1,0 +1,36 @@
+<!doctype html>
+<html>
+
+<head>
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const socket = io();
+            const button = document.getElementById('button');
+            const safety_messages = ['danger', 'hazard', 'none', 'finished'];
+            let index = 0;
+     
+            button.addEventListener('click', () => {
+                console.log("Button clicked");
+                // button clicks through all the messages (flags) for testing 
+                const message = safety_messages[index];
+                index++;
+                if (index > safety_messages.length) {
+                    index = 0;
+                }
+                socket.emit('safety:flag', message);
+            });
+
+            socket.on('connect', () => {
+                console.log('Connected to server');
+            });
+        });
+    </script>
+    <title>Index</title>
+</head>
+
+<body>
+    <button id="button">Change flag</button>
+</body>
+
+</html>
