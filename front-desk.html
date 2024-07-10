@@ -1,72 +1,84 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <script>
-            class Driver {
-                constructor(name, car) {
-                    this.name = name;
-                    this.car = car;
-                }
-            }
-            class Race {
-                constructor(drivers = []) {
-                    this.drivers = drivers;
-                    this.availableCars = 
-                        [8, 7, 6, 5, 4, 3, 2, 1];
-                }
 
-                get getDrivers() {
-                    return this.drivers;
+<head>
+    <script>
+        class Driver {
+            constructor(name, car) {
+                this.name = name;
+                this.car = car;
+            }
+        }
+        class Race {
+            constructor(drivers = []) {
+                this.drivers = drivers;
+                this.availableCars =
+                    [8, 7, 6, 5, 4, 3, 2, 1];
+            }
+
+            get getDrivers() {
+                return this.drivers;
+            }
+
+            addDriver(name, car = this.availableCars.pop()) {
+                const matchingDriver = this.drivers.filter((driver) => driver.name === name);
+                if (matchingDriver.length > 0) {
+                    return {error: true, code: 'name'}; 
                 }
-                
-                addDriver(name, car = this.availableCars.pop()) {
-                    const matchingDriver = this.drivers.filter((driver) => driver.name === name);
-                    if (matchingDriver.length > 0) {
-                        return false;
-                        //TODO: implement availableCars instead of index
+                const matchingCar = this.drivers.filter((driver) => driver.car === car);
+                if (matchingCar.length > 0) {
+                    return {error: true, code: 'car'};
+                }
+                const newDriver = new Driver(name, car);
+                this.drivers.push(newDriver);
+
+                return {error: false, code: null};
+            }
+
+            removeDriver(name) {
+                const currentLength = this.drivers.length;
+                this.drivers = this.drivers.filter((driver) => {
+                    if (driver.name === name) {
+                        this.availableCars.push(driver.car);
+                        return true;
                     }
-                    
-                    const newDriver = new Driver(name, car);
-                    this.drivers.push(newDriver);
-                    //incrementing car number
-                    curr
-                    return true;
-                }
-
-                removeDriver(name) {
-                    const currentLength = this.drivers.length;
-                    this.drivers = this.drivers.filter((driver) => driver.name !== name);
-                    return this.drivers.length !== currentLength;
-                }
+                    return false;
+                });
+                return this.drivers.length !== currentLength;
             }
+        }
 
-            document.addEventListener("DOMContentLoaded", () => {
+        document.addEventListener("DOMContentLoaded", () => {
 
-            });
-        </script>
-        <style>
-            body {
-                display: flex;
-                margin: 0;
-                padding: 0;
-                width: 100vw;
-                height: 100vh;
-                flex-wrap: wrap;
+        });
+    </script>
+    <style>
+        body {
+            display: flex;
+            margin: 0;
+            padding: 0;
+            width: 100vw;
+            height: 100vh;
+            flex-wrap: wrap;
 
-            }
-            .race {
-                flex-direction: column;
-                width: 25vw;
-                height: 50vw;
-            }
-            .driver {
-                width: 100%;
-                margin: 0px, 5px;
-                padding: 5px;
-            }
-        </style>
-    </head>
-    <body>
+        }
 
-    </body>
+        .race {
+            flex-direction: column;
+            width: 25vw;
+            height: 50vw;
+        }
+
+        .driver {
+            width: 100%;
+            margin: 0px, 5px;
+            padding: 5px;
+        }
+    </style>
+</head>
+
+<body>
+
+</body>
+
 </html>
