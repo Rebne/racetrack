@@ -10,8 +10,8 @@
             }
         }
         class Race {
-            constructor(drivers = []) {
-                this.drivers = drivers;
+            constructor() {
+                this.drivers = [];
                 this.availableCars =
                     [8, 7, 6, 5, 4, 3, 2, 1];
             }
@@ -20,7 +20,10 @@
                 return this.drivers;
             }
 
-            addDriver(name, car = this.availableCars.pop()) {
+            addDriver(name, car = null) {
+                if (this.availableCars.length === 0) {
+                    return {error: true, code: 'capacity'}
+                }
                 const matchingDriver = this.drivers.filter((driver) => driver.name === name);
                 if (matchingDriver.length > 0) {
                     return {error: true, code: 'name'}; 
@@ -28,6 +31,9 @@
                 const matchingCar = this.drivers.filter((driver) => driver.car === car);
                 if (matchingCar.length > 0) {
                     return {error: true, code: 'car'};
+                }
+                if (car === null ) {
+                    car = this.availableCars.pop();
                 }
                 const newDriver = new Driver(name, car);
                 this.drivers.push(newDriver);
@@ -48,8 +54,10 @@
             }
         }
 
-        document.addEventListener("DOMContentLoaded", () => {
+        
 
+        document.addEventListener("DOMContentLoaded", () => {
+             
         });
     </script>
     <style>
