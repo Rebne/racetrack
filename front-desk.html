@@ -11,20 +11,26 @@
             class Race {
                 constructor(drivers = []) {
                     this.drivers = drivers;
-                    this.currentCar = 1;
+                    this.availableCars = 
+                        [8, 7, 6, 5, 4, 3, 2, 1];
                 }
 
                 get getDrivers() {
                     return this.drivers;
                 }
                 
-                addDriver(name, car = this.currentCar) {
+                addDriver(name, car = this.availableCars.pop()) {
                     const matchingDriver = this.drivers.filter((driver) => driver.name === name);
                     if (matchingDriver.length > 0) {
                         return false;
+                        //TODO: implement availableCars instead of index
                     }
+                    
                     const newDriver = new Driver(name, car);
                     this.drivers.push(newDriver);
+                    //incrementing car number
+                    curr
+                    return true;
                 }
 
                 removeDriver(name) {
@@ -32,16 +38,10 @@
                     this.drivers = this.drivers.filter((driver) => driver.name !== name);
                     return this.drivers.length !== currentLength;
                 }
-
-
-                
-
             }
-            document.addEventListener("DOMContentLoaded", () => {
-                
-                let raceStack = []
 
-                
+            document.addEventListener("DOMContentLoaded", () => {
+
             });
         </script>
         <style>
