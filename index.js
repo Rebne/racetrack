@@ -19,6 +19,10 @@ app.get('/race-flags', (_, res) => {
   res.sendFile(join(__dirname, 'flag.html'));
 });
 
+app.get('/front-desk', (_, res) => {
+  res.sendFile(join(__dirname, 'front-desk.html'));
+});
+
 io.on('connection', (socket) => {
 
   console.log('a user connected');

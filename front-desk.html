@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script>
+            class Driver {
+                constructor(name, car) {
+                    this.name = name;
+                    this.car = car;
+                }
+            }
+            class Race {
+                constructor(drivers = []) {
+                    this.drivers = drivers;
+                    this.currentCar = 1;
+                }
+
+                get getDrivers() {
+                    return this.drivers;
+                }
+                
+                addDriver(name, car = this.currentCar) {
+                    const matchingDriver = this.drivers.filter((driver) => driver.name === name);
+                    if (matchingDriver.length > 0) {
+                        return false;
+                    }
+                    const newDriver = new Driver(name, car);
+                    this.drivers.push(newDriver);
+                }
+
+                removeDriver(name) {
+                    const currentLength = this.drivers.length;
+                    this.drivers = this.drivers.filter((driver) => driver.name !== name);
+                    return this.drivers.length !== currentLength;
+                }
+
+
+                
+
+            }
+            document.addEventListener("DOMContentLoaded", () => {
+                
+                let raceStack = []
+
+                
+            });
+        </script>
+        <style>
+            body {
+                display: flex;
+                margin: 0;
+                padding: 0;
+                width: 100vw;
+                height: 100vh;
+                flex-wrap: wrap;
+
+            }
+            .race {
+                flex-direction: column;
+                width: 25vw;
+                height: 50vw;
+            }
+            .driver {
+                width: 100%;
+                margin: 0px, 5px;
+                padding: 5px;
+            }
+        </style>
+    </head>
+    <body>
+
+    </body>
+</html>
