@@ -19,7 +19,7 @@
                     index = 0;
                 }
 
-                socket.emit('safety:flag', message);
+                socket.emit('flag:swap', message);
             });
 
             socket.on('connect', () => {

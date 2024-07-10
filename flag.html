@@ -30,10 +30,9 @@
                 }
             }
     
-            // checkered flag (finished) has temp color for testing
-            const flag_colors = new Map([['danger', 'red'], ['hazard', 'yellow'], ['none', 'white'],['finished', 'black']]);
-
-            socket.on('safety:flag', (message) => {
+            const flag_colors = new Map([['safe', 'green'],['danger', 'red'], ['hazard', 'yellow'], ['none', 'white'],['finished', 'checkered']]);
+            
+            socket.on('flag:swap', (message) => {
                 const color = flag_colors.get(message);
                 if (message == 'finished') {
                     createCheckeredFlag();
