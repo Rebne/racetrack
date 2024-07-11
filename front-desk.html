@@ -10,7 +10,8 @@
             }
         }
         class Race {
-            constructor() {
+            constructor(id) {
+                this.id = id;
                 this.drivers = [];
                 this.availableCars =
                     [8, 7, 6, 5, 4, 3, 2, 1];
@@ -57,30 +58,97 @@
         
 
         document.addEventListener("DOMContentLoaded", () => {
-             
+            let races = [];
+            let idCounter = 1;
+
+            function createRace() {
+                const race = new Race(idCounter);
+                races.push(race);
+                idCounter++;
+                
+                const raceDiv = document.createElement('div');
+                raceDiv.className = 'race';
+                raceDiv.id = `race-${race.id}`;
+
+                const raceTitle = document.createElement('h2');
+                raceTitle.textContent = `Race ${race.id}`;
+                raceDiv.appendChild(raceTitle);
+
+                const addDriverForm = document.createElement('form');
+                addDriverForm.innerHTML = `
+                    <input type="text" placeholder="Driver Name" id="driver-name-${race.id}">
+                    <button type="submit">Add Driver</button>
+                `;
+                addDriverForm.onsubmit = (e) => {
+                    e.preventDefault();
+                    const driverName = document.getElementById(`driver-name-${race.id}`).value;
+                    const result = race.addDriver(driverName);
+                    if (!result.error) {
+                        updateRaceDisplay(race);
+                    } else {
+                        let message = '';
+                        switch(result.code) {
+                            case 'capacity':
+                                message = 'maximum number of drivers (8) exceeded';
+                                break;
+                            case 'name':
+                                message = 'driver name already taken';
+                                break;
+                            default:
+                                message = 'car number already taken';
+                        }
+
+                        alert(`Error ${message}`);
+                    }
+                };
+                raceDiv.appendChild(addDriverForm);
+
+                document.body.appendChild(raceDiv);
+
+            }
+            
+            function updateRaceDisplay(race) {
+                const raceDiv = document.getElementById(`race-${race.id}`);
+                const existingDriver = raceDiv.querySelectorAll('.driver');
+                existingDriver.forEach((driver) => driver.remove());
+
+                race.getDrivers.forEach((driver) => {
+                    const driverDiv = document.createElement('div');
+                    driverDiv.className = 'driver';
+                    driverDiv.textContent = `${driver.name} - Car ${driver.car}`;
+                    raceDiv.appendChild(driverDiv);
+                });
+            }
+            const addRaceButton = document.createElement('button');
+            addRaceButton.textContent = 'Add New Race';
+            addRaceButton.onclick = createRace;
+            document.body.insertBefore(addRaceButton, document.body.firstChild);
         });
     </script>
     <style>
         body {
             display: flex;
             margin: 0;
-            padding: 0;
+            padding: 20px;
             width: 100vw;
-            height: 100vh;
+            min-height: 100vh;
             flex-wrap: wrap;
-
+            box-sizing: border-box;
         }
-
         .race {
+            display: flex;
             flex-direction: column;
             width: 25vw;
-            height: 50vw;
+            min-height: 50vh;
+            border: 1px solid #ccc;
+            margin: 10px;
+            padding: 10px;
         }
-
         .driver {
             width: 100%;
-            margin: 0px, 5px;
+            margin: 5px 0;
             padding: 5px;
+            background-color: #f0f0f0;
         }
     </style>
 </head>
