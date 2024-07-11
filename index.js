@@ -12,7 +12,11 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 app.use(express.static(__dirname));
 
 app.get('/', (_, res) => {
-  res.sendFile(join(__dirname, 'index.html'));
+  res.sendFile(join(__dirname, 'glossary.html'));
+});
+
+app.get('/race-control', (_, res) => {
+  res.sendFile(join(__dirname, 'race-control.html'));
 });
 
 app.get('/race-flags', (_, res) => {
