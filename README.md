@@ -1,6 +1,6 @@
 ### System Requirements
 
-- [ ] The server is written in Node.JS
+- [x] The server is written in Node.JS
 - [ ] The server can be started with `npm start`
 - [ ] The server can be started in developer mode with `npm run dev`
 - [ ] The interfaces are reachable by devices on other networks (not just localhost)
@@ -9,11 +9,11 @@
 
 ### Front Desk Interface (Receptionist)
 
-- [ ] The receptionist can see a list of upcoming races
+- [x] The receptionist can see a list of upcoming races
 - [ ] The receptionist can delete an upcoming race
-- [ ] The receptionist can add new race sessions
+- [x] The receptionist can add new race sessions
 - [ ] The receptionist can add/edit/remove drivers from a race
-- [ ] It is not possible to have two drivers with the same name
+- [x] It is not possible to have two drivers with the same name
 - [ ] Race sessions disappear from the Front Desk interface once it is safe to start
 - [ ] The race drivers cannot be edited after the race is safe to start
 
@@ -34,10 +34,10 @@
   - The leader board changes to the current race
   - The Next Race screen switches to the subsequent race session
   - The Safety Official sees race mode controls
-- [ ] When the Safety Official selects "Safe", the Flag screen is green
-- [ ] When the Safety Official selects "Hazard", the Flag screen is yellow
-- [ ] When the Safety Official selects "Danger", the Flag screen is red
-- [ ] When the Safety Official selects "Finish", the Flag screen is chequered
+- [x] When the Safety Official selects "Safe", the Flag screen is green
+- [x] When the Safety Official selects "Hazard", the Flag screen is yellow
+- [x] When the Safety Official selects "Danger", the Flag screen is red
+- [x] When the Safety Official selects "Finish", the Flag screen is chequered
 - [ ] When the race mode changes to "Finish", the race controls disappear, and a button appears to end the race session
 - [ ] When the Safety Official ends the race session, the next session appears on their interface
 - [ ] When the race session is ended, the race mode changes to "Danger"
