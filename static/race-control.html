@@ -6,20 +6,31 @@
     <script>
         document.addEventListener("DOMContentLoaded", () => {
             const socket = io();
-            const button = document.getElementById('button');
-            const safety_messages = ['danger', 'hazard', 'none', 'finished'];
-            let index = 0;
-     
-            button.addEventListener('click', () => {
-                // button clicks through all the messages (flags) for testing 
-                const message = safety_messages[index];
-                index++;
-                
-                if (index == safety_messages.length) {
-                    index = 0;
-                }
+            const buttons = document.querySelectorAll('.flag-button');
+            const safety_messages = ['danger', 'hazard', 'none', 'finished', 'safe'];
+            let activeButton = null;
 
-                socket.emit('flag:swap', message);
+            // Attach click event listeners to each button
+            buttons.forEach(button => {
+                button.addEventListener('click', () => {
+                    // Activate the clicked button and deactivate others
+                    buttons.forEach(b => {
+                        if (b === button) {
+                            b.classList.add('active');
+                            activeButton = b;
+                        } else {
+                            b.classList.remove('active');
+                        }
+                    });
+
+                    const message = button.dataset.flag;
+                    socket.emit('flag:swap', message);
+                    if (message === 'safe') { // Check if 'safe' is selected
+                        socket.emit('start:race'); // Emit start race signal
+                    } else {
+                        button.classList.add('active');
+                    }
+                });
             });
 
             socket.on('connect', () => {
@@ -27,11 +38,31 @@
             });
         });
     </script>
+    <style>
+        .flag-button {
+            padding: 8px 16px;
+            margin: 5px;
+            cursor: pointer;
+            border: 1px solid #ccc;
+            background-color: #f0f0f0;
+        }
+
+        .flag-button.active {
+            background-color: #4CAF50;
+            color: white;
+        }
+    </style>
     <title>Index</title>
 </head>
 
 <body>
-    <button id="button">Change flag</button>
+<div>
+    <button class="flag-button" data-flag="none">None</button>
+    <button class="flag-button" data-flag="safe">Safe</button>
+    <button class="flag-button" data-flag="hazard">Hazard</button>
+    <button class="flag-button" data-flag="danger">Danger</button>
+    <button class="flag-button" data-flag="finished">Finished</button>
+</div>
 </body>
 
 </html>
