@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Race countdown</title>
+</head>
+<body>
+
+<div id="countdown">10:00</div>
+<script src="/socket.io/socket.io.js"></script>
+<script>
+    const countdownTime = 10 * 60;
+    let timeRemaining = countdownTime;
+
+    function formatTime(seconds) {
+        const minutes = Math.floor(seconds / 60);
+        const secs = seconds % 60;
+        return `${minutes}:${secs < 10 ? '0' : ''}${secs}`;
+    }
+
+    function updateCountdown() {
+        const countdownElement = document.getElementById('countdown');
+        countdownElement.textContent = formatTime(timeRemaining);
+
+        if (timeRemaining > 0) {
+            timeRemaining--;
+            setTimeout(updateCountdown, 1000);
+        } else {
+            countdownElement.textContent = "Race Over";
+        }
+    }
+
+    updateCountdown();
+</script>
+</body>
+</html>

@@ -27,6 +27,10 @@ app.get('/front-desk', (_, res) => {
   res.sendFile(join(__dirname, 'front-desk.html'));
 });
 
+app.get('/race-countdown', (_, res) => {
+  res.sendFile(join(__dirname, 'race-countdown.html'));
+})
+
 io.on('connection', (socket) => {
 
   console.log('a user connected');
