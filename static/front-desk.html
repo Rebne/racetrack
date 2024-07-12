@@ -103,7 +103,11 @@
                 };
                 raceDiv.appendChild(addDriverForm);
 
-                document.body.appendChild(raceDiv);
+                
+            }
+
+            function updateAddRaceDiv(raceDiv) {
+               document.getElementById('add-race');
 
             }
 
@@ -119,10 +123,20 @@
                     raceDiv.appendChild(driverDiv);
                 });
             }
+
+            const addRaceDiv = document.createElement('div');
+            addRaceDiv.className = 'race';
+            addRaceDiv.id = 'add-race';
+            
             const addRaceButton = document.createElement('button');
             addRaceButton.textContent = 'Add New Race';
+            addRaceButton.id = 'add-race-button';
             addRaceButton.onclick = createRace;
-            document.body.insertBefore(addRaceButton, document.body.firstChild);
+            addRaceDiv.appendChild(addRaceButton);
+
+            document.body.appendChild(addRaceDiv);
+
+            
         });
     </script>
     <style>
