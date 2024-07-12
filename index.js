@@ -12,23 +12,31 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 app.use(express.static(__dirname));
 
 app.get('/', (_, res) => {
-  res.sendFile(join(__dirname, 'glossary.html'));
+  res.sendFile(join(__dirname,'static', 'glossary.html'));
 });
 
 app.get('/race-control', (_, res) => {
-  res.sendFile(join(__dirname, 'race-control.html'));
+  res.sendFile(join(__dirname,'static', 'race-control.html'));
 });
 
 app.get('/race-flags', (_, res) => {
-  res.sendFile(join(__dirname, 'flag.html'));
+  res.sendFile(join(__dirname,'static', 'flag.html'));
 });
 
 app.get('/front-desk', (_, res) => {
-  res.sendFile(join(__dirname, 'front-desk.html'));
+  res.sendFile(join(__dirname,'static', 'front-desk.html'));
 });
 
 app.get('/race-countdown', (_, res) => {
-  res.sendFile(join(__dirname, 'race-countdown.html'));
+  res.sendFile(join(__dirname,'static', 'race-countdown.html'));
+})
+
+app.get('/lap-line-tracker', (_, res) => {
+  res.sendFile(join(__dirname,'static', 'lap-line-tracker.html'));
+})
+
+app.get('/leader-board', (_, res) => {
+  res.sendFile(join(__dirname,'static', 'leader-board.html'));
 })
 
 io.on('connection', (socket) => {
