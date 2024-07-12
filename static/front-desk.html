@@ -23,23 +23,23 @@
 
             addDriver(name, car = null) {
                 if (this.availableCars.length === 0) {
-                    return {error: true, code: 'capacity'}
+                    return { error: true, code: 'capacity' }
                 }
                 const matchingDriver = this.drivers.filter((driver) => driver.name === name);
                 if (matchingDriver.length > 0) {
-                    return {error: true, code: 'name'};
+                    return { error: true, code: 'name' };
                 }
                 const matchingCar = this.drivers.filter((driver) => driver.car === car);
                 if (matchingCar.length > 0) {
-                    return {error: true, code: 'car'};
+                    return { error: true, code: 'car' };
                 }
-                if (car === null ) {
+                if (car === null) {
                     car = this.availableCars.pop();
                 }
                 const newDriver = new Driver(name, car);
                 this.drivers.push(newDriver);
 
-                return {error: false, code: null};
+                return { error: false, code: null };
             }
 
             removeDriver(name) {
@@ -87,7 +87,7 @@
                         updateRaceDisplay(race);
                     } else {
                         let message = '';
-                        switch(result.code) {
+                        switch (result.code) {
                             case 'capacity':
                                 message = 'maximum number of drivers (8) exceeded';
                                 break;
@@ -102,13 +102,22 @@
                     }
                 };
                 raceDiv.appendChild(addDriverForm);
+                document.body.appendChild(raceDiv);
+                updateAddRaceDiv();
 
-                
+
             }
 
-            function updateAddRaceDiv(raceDiv) {
-               document.getElementById('add-race');
-
+            function updateAddRaceDiv() {
+                let addRaceDiv = document.getElementById('add-race');
+                if (!addRaceDiv) {
+                    addRaceDiv = document.createElement('div');
+                    addRaceDiv.className = 'race';
+                    addRaceDiv.id = 'add-race';
+                    addRaceDiv.textContent = '+';
+                    addRaceDiv.onclick = createRace;
+                }
+                document.body.appendChild(addRaceDiv);
             }
 
             function updateRaceDisplay(race) {
@@ -124,45 +133,51 @@
                 });
             }
 
-            const addRaceDiv = document.createElement('div');
-            addRaceDiv.className = 'race';
-            addRaceDiv.id = 'add-race';
-            
-            const addRaceButton = document.createElement('button');
-            addRaceButton.textContent = 'Add New Race';
-            addRaceButton.id = 'add-race-button';
-            addRaceButton.onclick = createRace;
-            addRaceDiv.appendChild(addRaceButton);
+            updateAddRaceDiv();
 
-            document.body.appendChild(addRaceDiv);
 
-            
         });
     </script>
     <style>
         body {
             display: flex;
             margin: 0;
-            padding: 20px;
+            padding: 0;
             width: 100vw;
             min-height: 100vh;
             flex-wrap: wrap;
             box-sizing: border-box;
         }
+
         .race {
             display: flex;
             flex-direction: column;
+            box-sizing: border-box;
             width: 25vw;
-            min-height: 50vh;
+            height: 50vh;
             border: 1px solid #ccc;
-            margin: 10px;
+            margin: 0;
             padding: 10px;
         }
+
         .driver {
             width: 100%;
             margin: 5px 0;
             padding: 5px;
             background-color: #f0f0f0;
+        }
+
+        #add-race {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 48px;
+            cursor: pointer;
+            background-color: #f0f0f0;
+        }
+
+        #add-race:hover {
+            background-color: #e0e0e0;
         }
     </style>
 </head>
