@@ -27,7 +27,7 @@
                 }
                 const matchingDriver = this.drivers.filter((driver) => driver.name === name);
                 if (matchingDriver.length > 0) {
-                    return {error: true, code: 'name'}; 
+                    return {error: true, code: 'name'};
                 }
                 const matchingCar = this.drivers.filter((driver) => driver.car === car);
                 if (matchingCar.length > 0) {
@@ -55,7 +55,7 @@
             }
         }
 
-        
+
 
         document.addEventListener("DOMContentLoaded", () => {
             let races = [];
@@ -65,7 +65,7 @@
                 const race = new Race(idCounter);
                 races.push(race);
                 idCounter++;
-                
+
                 const raceDiv = document.createElement('div');
                 raceDiv.className = 'race';
                 raceDiv.id = `race-${race.id}`;
@@ -106,7 +106,7 @@
                 document.body.appendChild(raceDiv);
 
             }
-            
+
             function updateRaceDisplay(race) {
                 const raceDiv = document.getElementById(`race-${race.id}`);
                 const existingDriver = raceDiv.querySelectorAll('.driver');

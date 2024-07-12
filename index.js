@@ -39,6 +39,10 @@ app.get('/leader-board', (_, res) => {
   res.sendFile(join(__dirname,'static', 'leader-board.html'));
 })
 
+app.get('next-race', (_, res) => {
+  res.sendFile(join(__dirname,'static', 'next-race.html'));
+})
+
 io.on('connection', (socket) => {
 
   console.log('a user connected');

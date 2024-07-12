@@ -2,22 +2,74 @@
 <html>
 
 <head>
-
+    <title>Glossary</title>
+    <style>
+        table {
+            width: 50%;
+            margin: auto;
+            border-collapse: collapse;
+        }
+        th, td {
+            padding: 10px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        td a {
+            text-decoration: none;
+            color: #007bff;
+        }
+    </style>
 </head>
 
 <body>
-    <div>
-        <a href="http://localhost:3000/race-flags" target="_blank">FLAGS</a>
-    </div>
-    <div>
-        <a href="http://localhost:3000/race-control" target="_blank">SAFETY OFFICIAL</a>
-    </div>
-    <div>
-        <a href="http://localhost:3000/front-desk" target="_blank">RECEPTIONIST</a>
-    </div>
-    <div>
-        <a href="http://localhost:3000/race-countdown" target="_blank">RACE DRIVER</a>
-    </div>
+<h2>Interface Glossary</h2>
+
+<table>
+    <tr>
+        <th>Interface</th>
+        <th>Persona</th>
+        <th>Route</th>
+    </tr>
+    <tr>
+        <td>Front Desk</td>
+        <td>Receptionist</td>
+        <td><a href="/front-desk" target="_blank">/front-desk</a></td>
+    </tr>
+    <tr>
+        <td>Race Control</td>
+        <td>Safety Official</td>
+        <td><a href="/race-control" target="_blank">/race-control</a></td>
+    </tr>
+    <tr>
+        <td>Lap-line Tracker</td>
+        <td>Lap-line Observer</td>
+        <td><a href="/lap-line-tracker" target="_blank">/lap-line-tracker</a></td>
+    </tr>
+    <tr>
+        <td>Leader Board</td>
+        <td>Guest</td>
+        <td><a href="/leader-board" target="_blank">/leader-board</a></td>
+    </tr>
+    <tr>
+        <td>Next Race</td>
+        <td>Race Driver</td>
+        <td><a href="/next-race" target="_blank">/next-race</a></td>
+    </tr>
+    <tr>
+        <td>Race Countdown</td>
+        <td>Race Driver</td>
+        <td><a href="/race-countdown" target="_blank">/race-countdown</a></td>
+    </tr>
+    <tr>
+        <td>Race Flag</td>
+        <td>Race Driver</td>
+        <td><a href="/race-flags" target="_blank">/race-flags</a></td>
+    </tr>
+</table>
+
 </body>
 
 </html>
