@@ -2,6 +2,7 @@
 <html>
 
 <head>
+    <script src="/socket.io/socket.io.js"></script>
     <script>
         class Driver {
             constructor(name, car) {
@@ -22,6 +23,9 @@
             }
 
             addDriver(name, car = null) {
+                if (car < 1 || car > 8) {
+                    return {error: true, code: 'overflow'}
+                }
                 if (this.availableCars.length === 0) {
                     return { error: true, code: 'capacity' }
                 }
@@ -47,7 +51,7 @@
                 this.drivers = this.drivers.filter((driver) => {
                     if (driver.name === name) {
                         this.availableCars.push(driver.car);
-                        return true;
+                        return true; 
                     }
                     return false;
                 });
@@ -55,11 +59,15 @@
             }
         }
 
-
-
         document.addEventListener("DOMContentLoaded", () => {
             let races = [];
             let idCounter = 1;
+
+            const socket = io();
+
+            socket.on('start:race', () => {
+                const activeRace = races.shift();
+            });
 
             function createRace() {
                 const race = new Race(idCounter);
@@ -77,35 +85,51 @@
                 const addDriverForm = document.createElement('form');
                 addDriverForm.innerHTML = `
                     <input type="text" placeholder="Driver Name" id="driver-name-${race.id}">
+                    <input type="text" placeholder="Car" id="car-num-${race.id}">
                     <button type="submit">Add Driver</button>
                 `;
                 addDriverForm.onsubmit = (e) => {
                     e.preventDefault();
                     const driverName = document.getElementById(`driver-name-${race.id}`).value;
-                    const result = race.addDriver(driverName);
+                    const carNum = document.getElementById(`car-num-${race.id}`).value;
+                    const result = race.addDriver(driverName, carNum);
                     if (!result.error) {
                         updateRaceDisplay(race);
                     } else {
-                        let message = '';
                         switch (result.code) {
+                            case 'overflow':
+                                alert('Invalid number entered\nAvailable car numbers are in range 1 - 8');
+                                break
                             case 'capacity':
-                                message = 'maximum number of drivers (8) exceeded';
+                                alert('Maximum number of drivers (8) exceeded');
                                 break;
                             case 'name':
-                                message = 'driver name already taken';
+                                alert('Driver name already taken');
                                 break;
                             default:
-                                message = 'car number already taken';
+                                alert('Car number already taken');
                         }
 
-                        alert(`Error ${message}`);
                     }
                 };
                 raceDiv.appendChild(addDriverForm);
+                const closeButton = document.createElement('button');
+                closeButton.className = 'close-button';
+                closeButton.id = `close-button-${race.id}`;
+                closeButton.textContent = 'X';
+                closeButton.addEventListener('click', () => {
+                    removeRace(race.id);
+                });
+                raceDiv.appendChild(closeButton);
+
                 document.body.appendChild(raceDiv);
                 updateAddRaceDiv();
 
-
+            }
+            
+            function removeRace(raceID) {
+                const raceToRemove = document.getElementById(`race-${raceID}`);
+                raceToRemove.remove();
             }
 
             function updateAddRaceDiv() {
@@ -131,11 +155,10 @@
                     driverDiv.textContent = `${driver.name} - Car ${driver.car}`;
                     raceDiv.appendChild(driverDiv);
                 });
+                updateAddRaceDiv();
             }
 
             updateAddRaceDiv();
-
-
         });
     </script>
     <style>
@@ -150,6 +173,7 @@
         }
 
         .race {
+            position: relative;
             display: flex;
             flex-direction: column;
             box-sizing: border-box;
@@ -158,6 +182,16 @@
             border: 1px solid #ccc;
             margin: 0;
             padding: 10px;
+        }
+        
+        .close-button {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            background: none;
+            border: none;
+            font-size: 20px;
+            cursor: pointer;
         }
 
         .driver {
