@@ -2,6 +2,7 @@
 <html>
 
 <head>
+    <meta charset="UTF-8">
     <script src="/socket.io/socket.io.js"></script>
     <script>
         class Driver {
@@ -34,7 +35,7 @@
             addDriver(name, car = null) {
                 if (!car) {
                     car = this.availableCars.pop();
-                }else if (car < 1 || car > 8) {
+                } else if (car < 1 || car > 8) {
                     return { error: true, code: 'overflow' };
                 } else {
                     car = parseInt(car);
@@ -63,15 +64,13 @@
             }
 
             removeDriver(name) {
-                const currentLength = this.drivers.length;
-                this.drivers = this.drivers.filter((driver) => {
-                    if (driver.name === name) {
-                        this.availableCars.push(driver.car);
-                        return true;
-                    }
-                    return false;
-                });
-                return this.drivers.length !== currentLength;
+                const initialLength = this.drivers.length;
+                const removedDriver = this.drivers.find(driver => driver.name === name);
+                if (removedDriver) {
+                    this.availableCars.push(removedDriver.car);
+                    this.drivers = this.drivers.filter(driver => driver.name !== name);
+                }
+                return this.drivers.length !== initialLength;
             }
         }
 
@@ -172,6 +171,22 @@
                     const driverDiv = document.createElement('div');
                     driverDiv.className = 'driver';
                     driverDiv.textContent = `${driver.name} - Car ${driver.car}`;
+                    driverDiv.id = `driver-${race.id}-${driver.name}`;
+
+                    const deleteButton = document.createElement('button');
+                    deleteButton.className = 'delete-driver-button';
+                    deleteButton.id = `delete-driver-button-${race.id}-${driver.car}`;
+                    deleteButton.textContent = '🚮';
+                    deleteButton.addEventListener('click', () => {
+                        const driverRemoved = race.removeDriver(driver.name);
+                        if (driverRemoved) {
+                            updateRaceDisplay(race);
+                        } else {
+                            alert('Driver was not removed with updateRaceDisplay for some reason')
+                        }
+                    }
+                    );
+                    driverDiv.appendChild(deleteButton);
                     raceDiv.appendChild(driverDiv);
                 });
                 updateAddRaceDiv();
@@ -214,10 +229,18 @@
         }
 
         .driver {
+            position: relative;
             width: 100%;
             margin: 5px 0;
             padding: 5px;
             background-color: #f0f0f0;
+        }
+
+        .delete-driver-button {
+            position: absolute;
+            right: 5px;
+            background-color: rgb(226, 14, 14);
+            border-radius: 25%;
         }
 
         #add-race {
