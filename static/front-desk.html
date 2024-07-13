@@ -22,12 +22,31 @@
                 return this.drivers;
             }
 
+            removeCar(car) {
+                for (let i = 0; i < this.availableCars.length; i++) {
+                    if (this.availableCars[i] === car) {
+                        this.availableCars.splice(i, 1);
+                        break;
+                    }
+                }
+            }
+
             addDriver(name, car = null) {
+                if (!car) {
+                    car = this.availableCars.pop();
+                }else if (car < 1 || car > 8) {
+                    return { error: true, code: 'overflow' };
+                } else {
+                    car = parseInt(car);
+                    this.removeCar(car);
+                }
+                if (!name) {
+                    return { error: true, code: 'empty' };
+                }
                 if (car < 1 || car > 8) {
-                    return {error: true, code: 'overflow'}
                 }
                 if (this.availableCars.length === 0) {
-                    return { error: true, code: 'capacity' }
+                    return { error: true, code: 'capacity' };
                 }
                 const matchingDriver = this.drivers.filter((driver) => driver.name === name);
                 if (matchingDriver.length > 0) {
@@ -37,12 +56,9 @@
                 if (matchingCar.length > 0) {
                     return { error: true, code: 'car' };
                 }
-                if (car === null) {
-                    car = this.availableCars.pop();
-                }
+
                 const newDriver = new Driver(name, car);
                 this.drivers.push(newDriver);
-
                 return { error: false, code: null };
             }
 
@@ -51,7 +67,7 @@
                 this.drivers = this.drivers.filter((driver) => {
                     if (driver.name === name) {
                         this.availableCars.push(driver.car);
-                        return true; 
+                        return true;
                     }
                     return false;
                 });
@@ -97,9 +113,12 @@
                         updateRaceDisplay(race);
                     } else {
                         switch (result.code) {
+                            case 'empty':
+                                alert('Driver name cannot be empty');
+                                break;
                             case 'overflow':
                                 alert('Invalid number entered\nAvailable car numbers are in range 1 - 8');
-                                break
+                                break;
                             case 'capacity':
                                 alert('Maximum number of drivers (8) exceeded');
                                 break;
@@ -126,7 +145,7 @@
                 updateAddRaceDiv();
 
             }
-            
+
             function removeRace(raceID) {
                 const raceToRemove = document.getElementById(`race-${raceID}`);
                 raceToRemove.remove();
@@ -183,7 +202,7 @@
             margin: 0;
             padding: 10px;
         }
-        
+
         .close-button {
             position: absolute;
             top: 5px;
