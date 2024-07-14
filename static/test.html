@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<head>
+    <script>
+        async function addRace() {
+            try {
+                const data = {id: 1};
+                const response = await fetch('/races', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(data)
+                });
+                if (!response.ok) {
+                    throw new Error('Problem with adding a race');
+                }   
+            } catch (error) {
+                console.error('Fetch error:', error);
+            }
+        }
+        
+        async function deleteRace() {
+            try {
+                const response = await fetch('/races/1', {
+                    method: 'DELETE'
+                });
+                if (!response.ok) {
+                    throw new Error('Problem with deleting a race');
+                }
+            } catch(error) {
+                console.error(error);
+            }
+        }
+        deleteRace();
+
+    </script>
+</head>
+<body>
+
+</body>
