@@ -10,9 +10,9 @@
 ### Front Desk Interface (Receptionist)
 
 - [x] The receptionist can see a list of upcoming races
-- [ ] The receptionist can delete an upcoming race
+- [x] The receptionist can delete an upcoming race
 - [x] The receptionist can add new race sessions
-- [ ] The receptionist can add/edit/remove drivers from a race
+- [x] The receptionist can add/edit/remove drivers from a race
 - [x] It is not possible to have two drivers with the same name
 - [ ] Race sessions disappear from the Front Desk interface once it is safe to start
 - [ ] The race drivers cannot be edited after the race is safe to start

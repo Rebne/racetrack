@@ -82,6 +82,7 @@
 
             socket.on('start:race', () => {
                 const activeRace = races.shift();
+                
             });
 
             function createRace() {
@@ -176,6 +177,9 @@
                 }
             }
 
+            // FIXME: DriverDiv does not scale properly with current setup
+
+            //TODO: Next race display   has to be updated with changes made to the raceDiv that is next
             function updateRaceDisplay(race) {
                 const raceDiv = document.getElementById(`race-${race.id}`);
                 const existingDriver = raceDiv.querySelectorAll('.driver');
