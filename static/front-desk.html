@@ -99,9 +99,9 @@
 
                 const addDriverForm = document.createElement('form');
                 addDriverForm.innerHTML = `
-                    <input type="text" placeholder="Driver Name" id="driver-name-${race.id}">
-                    <input type="text" placeholder="Car" id="car-num-${race.id}">
-                    <button type="submit">Add Driver</button>
+                    <input type="text" placeholder="Driver Name" class="driver-input" id="driver-name-${race.id}">
+                    <input type="text" placeholder="Car" class="car-input" id="car-num-${race.id}">
+                    <button type="submit" class="add-driver-button" >Add Driver</button>
                 `;
                 addDriverForm.onsubmit = (e) => {
                     e.preventDefault();
@@ -124,10 +124,10 @@
                             case 'name':
                                 alert('Driver name already taken');
                                 break;
-                            default:
+                            case 'car':
                                 alert('Car number already taken');
+                                break;
                         }
-
                     }
                 };
                 raceDiv.appendChild(addDriverForm);
@@ -172,11 +172,12 @@
                     driverDiv.className = 'driver';
                     driverDiv.textContent = `${driver.name} - Car ${driver.car}`;
                     driverDiv.id = `driver-${race.id}-${driver.name}`;
+                    const buttons = document.createElement('div');
+                    buttons.className = 'button-container';
 
                     const deleteButton = document.createElement('button');
-                    deleteButton.className = 'delete-driver-button';
-                    deleteButton.id = `delete-driver-button-${race.id}-${driver.car}`;
-                    deleteButton.textContent = '🚮';
+                    deleteButton.className = 'delete-driver-button driver-button';
+                    deleteButton.textContent = 'Del';
                     deleteButton.addEventListener('click', () => {
                         const driverRemoved = race.removeDriver(driver.name);
                         if (driverRemoved) {
@@ -184,9 +185,19 @@
                         } else {
                             alert('Driver was not removed with updateRaceDisplay for some reason')
                         }
-                    }
-                    );
-                    driverDiv.appendChild(deleteButton);
+                    });
+
+                    const editButton = document.createElement('button'); 
+                    editButton.className = 'edit-driver-button driver-button';
+                    editButton.textContent = 'Edit';
+                    editButton.addEventListener('click', () => {
+                        // TODO: add logic for edit button
+                        // Dummy content
+                        console.log('Edit clicked');
+                    });
+                    buttons.appendChild(editButton);
+                    buttons.appendChild(deleteButton);
+                    driverDiv.appendChild(buttons);
                     raceDiv.appendChild(driverDiv);
                 });
                 updateAddRaceDiv();
@@ -204,6 +215,14 @@
             min-height: 100vh;
             flex-wrap: wrap;
             box-sizing: border-box;
+        }
+
+        .car-input {
+            width: 10%;
+        }
+
+        .driver-input {
+            width: 55%;
         }
 
         .race {
@@ -236,11 +255,20 @@
             background-color: #f0f0f0;
         }
 
-        .delete-driver-button {
+        .button-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
             position: absolute;
             right: 5px;
-            background-color: rgb(226, 14, 14);
-            border-radius: 25%;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+        .driver-button {
+            display: flex;
+            gap: 10px;
+            background-color: #c7c7c7;
+            border-radius: 15%;
         }
 
         #add-race {
