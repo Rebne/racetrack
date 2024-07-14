@@ -104,9 +104,15 @@
                     <button type="submit" class="add-driver-button" >Add Driver</button>
                 `;
                 addDriverForm.onsubmit = (e) => {
-                    e.preventDefault();
-                    const driverName = document.getElementById(`driver-name-${race.id}`).value;
-                    const carNum = document.getElementById(`car-num-${race.id}`).value;
+                    e.preventDefault(); 
+                    const driverInput = document.getElementById(`driver-name-${race.id}`);
+                    const carInput = document.getElementById(`car-num-${race.id}`);
+                    const driverName = driverInput.value;
+                    const carNum = carInput.value;
+                    // Resetting values for the edit button to function as it should
+                    driverInput.value = '';
+                    carInput.value = '';
+
                     const result = race.addDriver(driverName, carNum);
                     if (!result.error) {
                         updateRaceDisplay(race);
@@ -161,6 +167,14 @@
                 }
                 document.body.appendChild(addRaceDiv);
             }
+            function removeDriverDiv(race, driver) {
+                const driverRemoved = race.removeDriver(driver.name);
+                if (driverRemoved) {
+                    updateRaceDisplay(race);
+                } else {
+                    alert('Driver was not removed with updateRaceDisplay for some reason')
+                }
+            }
 
             function updateRaceDisplay(race) {
                 const raceDiv = document.getElementById(`race-${race.id}`);
@@ -178,23 +192,20 @@
                     const deleteButton = document.createElement('button');
                     deleteButton.className = 'delete-driver-button driver-button';
                     deleteButton.textContent = 'Del';
-                    deleteButton.addEventListener('click', () => {
-                        const driverRemoved = race.removeDriver(driver.name);
-                        if (driverRemoved) {
-                            updateRaceDisplay(race);
-                        } else {
-                            alert('Driver was not removed with updateRaceDisplay for some reason')
-                        }
-                    });
+                    deleteButton.addEventListener('click', () => removeDriverDiv(race, driver));
 
-                    const editButton = document.createElement('button'); 
+                    const editButton = document.createElement('button');
                     editButton.className = 'edit-driver-button driver-button';
                     editButton.textContent = 'Edit';
                     editButton.addEventListener('click', () => {
-                        // TODO: add logic for edit button
-                        // Dummy content
-                        console.log('Edit clicked');
+                        const driverInput = document.getElementById(`driver-name-${race.id}`);
+                        const carInput = document.getElementById(`car-num-${race.id}`);
+                        driverInput.value = driver.name;
+                        carInput.value = driver.car;
+                        removeDriverDiv(race, driver);
+                        driverInput.focus();
                     });
+
                     buttons.appendChild(editButton);
                     buttons.appendChild(deleteButton);
                     driverDiv.appendChild(buttons);
@@ -264,6 +275,7 @@
             top: 50%;
             transform: translateY(-50%);
         }
+
         .driver-button {
             display: flex;
             gap: 10px;
