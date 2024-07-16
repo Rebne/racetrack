@@ -4,26 +4,32 @@
 
         async function addRow() {
             try {
-                const data = {table: 'drivers', data: {id: 1, race_id: 3, name: 'Marko', car: 4}};
                 const response = await fetch('/races', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify(data)
+                    body: JSON.stringify({id: 1})
                 });
                 if (!response.ok) {
-                    throw new Error('Problem with adding a race');
+                    const errorData = response.json();
+
+                    throw new Error(errorData.error);
                 }   
             } catch (error) {
                 console.error('Fetch error:', error);
             }
         }
         
-        async function deleteItem() {
+        async function deleteRow() {
             try {
-                const response = await fetch('/races/1', {
-                    method: 'DELETE'
+
+                const response = await fetch('/races', {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({id: 1})
                 });
                 if (!response.ok) {
                     throw new Error('Problem with deleting a race');
@@ -32,10 +38,12 @@
                 console.error(error);
             }
         }
-        addRow();
+        
 
     </script>
 </head>
 <body>
+    <button onclick=addRow()>AddRace</button>
+    <button onclick=deleteRow()>DeleteRace</button>
 
 </body>

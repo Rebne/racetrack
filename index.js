@@ -3,7 +3,7 @@ import { createServer } from 'node:http';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
 import { Server } from 'socket.io';
-import {createRow, deleteRow} from './database.js'
+import {createRace, deleteRace} from './database.js'
 
 const app = express();
 const server = createServer(app);
@@ -21,8 +21,8 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 app.use(express.static(__dirname));
 
 
-app.post('/races', createRow);
-app.delete('/races/:id', deleteRow);
+app.post('/races', createRace);
+app.delete('/races', deleteRace);
 
 app.get('/test', (_, res) => {
   res.sendFile(join(__dirname, 'static', 'test.html'));
