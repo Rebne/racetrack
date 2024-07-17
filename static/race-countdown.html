@@ -4,10 +4,10 @@
     <title>Race countdown</title>
 </head>
 <body>
-
 <div id="countdown">10:00</div>
 <script src="/socket.io/socket.io.js"></script>
 <script>
+    const socket = io();
     const countdownTime = 10 * 60;
     let timeRemaining = countdownTime;
 
@@ -29,7 +29,15 @@
         }
     }
 
-    updateCountdown();
+    socket.on('connect', () => {
+        console.log('Connected to server');
+    });
+
+    socket.on('start:race', () => {
+        console.log('Race started');
+        timeRemaining = countdownTime; // Reset the countdown
+        updateCountdown(); // Start the countdown
+    });
 </script>
 </body>
 </html>

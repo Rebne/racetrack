@@ -1,13 +1,11 @@
 <!doctype html>
 <html>
-
 <head>
     <script src="/socket.io/socket.io.js"></script>
     <script>
         document.addEventListener("DOMContentLoaded", () => {
             const socket = io();
             const buttons = document.querySelectorAll('.flag-button');
-            const safety_messages = ['danger', 'hazard', 'none', 'finished', 'safe'];
             let activeButton = null;
 
             // Attach click event listeners to each button
@@ -25,7 +23,7 @@
 
                     const message = button.dataset.flag;
                     socket.emit('flag:swap', message);
-                    if (message === 'safe') { // Check if 'safe' is selected
+                    if (message === 'safe') {
                         socket.emit('start:race'); // Emit start race signal
                     } else {
                         button.classList.add('active');
@@ -54,7 +52,6 @@
     </style>
     <title>Index</title>
 </head>
-
 <body>
 <div>
     <button class="flag-button" data-flag="none">None</button>
@@ -64,5 +61,4 @@
     <button class="flag-button" data-flag="finished">Finished</button>
 </div>
 </body>
-
 </html>
