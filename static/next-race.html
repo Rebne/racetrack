@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Next Race</title>
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        const socket = io();
+
+        socket.on('connect', () => {
+            console.log('Connected to server');
+        });
+
+        socket.on('update:nextRace', (race) => {
+            const nextRaceDiv = document.getElementById('next-race');
+            if (race) {
+                nextRaceDiv.innerHTML = `
+                    <h2>Next Race: ${race.id}</h2>
+                    <ul>
+                        ${race.drivers.map(driver => `<li>${driver.name} - Car ${driver.car}</li>`).join('')}
+                    </ul>
+                `;
+            } else {
+                nextRaceDiv.innerHTML = '<h2>No races in queue</h2>';
+            }
+        });
+    </script>
+</head>
+<body>
+<div id="next-race">
+    <h2>No races in queue</h2>
+</div>
+</body>
+</html>

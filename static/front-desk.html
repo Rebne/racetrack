@@ -82,7 +82,7 @@
 
             socket.on('start:race', () => {
                 const activeRace = races.shift();
-                
+
             });
 
             function createRace() {
@@ -105,7 +105,7 @@
                     <button type="submit" class="add-driver-button" >Add Driver</button>
                 `;
                 addDriverForm.onsubmit = (e) => {
-                    e.preventDefault(); 
+                    e.preventDefault();
                     const driverInput = document.getElementById(`driver-name-${race.id}`);
                     const carInput = document.getElementById(`car-num-${race.id}`);
                     const driverName = driverInput.value;
