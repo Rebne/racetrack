@@ -1,77 +1,42 @@
 <!doctype html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Race Control</title>
     <script src="/socket.io/socket.io.js"></script>
-    <script>
-        document.addEventListener("DOMContentLoaded", () => {
-            const socket = io();
-            const startButton = document.querySelector('.start-button');
-            const controlButtons = document.querySelector('.control-buttons');
-            const endRaceSessionButton = document.querySelector('.end-race-session-button');
-            const buttons = controlButtons.querySelectorAll('.flag-button');
-
-            startButton.addEventListener('click', () => {
-                startNewRace();
-            });
-
-            // Attach click event listeners to each control button
-            buttons.forEach(button => {
-                button.addEventListener('click', () => {
-                    // Activate the clicked button and deactivate others
-                    buttons.forEach(b => {
-                        if (b === button) {
-                            b.classList.add('active');
-                        } else {
-                            b.classList.remove('active');
-                        }
-                    });
-
-                    const message = button.dataset.flag;
-                    socket.emit('flag:swap', message);
-
-                    // Check if the race mode is "Finished"
-                    if (message === 'finished') {
-                        controlButtons.style.display = 'none';
-                        endRaceSessionButton.style.display = 'block';
-                        socket.emit('finish:race');
-                    }
-                });
-            });
-
-            endRaceSessionButton.addEventListener('click', () => {
-                // Hide the end race session button
-                endRaceSessionButton.style.display = 'none';
-
-                // Set race mode to "Danger"
-                socket.emit('flag:swap', 'danger');
-                // Display the start button to allow a new race session to start
-                startButton.style.display = 'block';
-            });
-
-            socket.on('connect', () => {
-                console.log('Connected to server');
-            });
-
-            function startNewRace() {
-                // Hide the start button and show the control buttons
-                startButton.style.display = 'none';
-                controlButtons.style.display = 'block';
-
-                // Set race mode to "Safe"
-                const safeButton = controlButtons.querySelector('[data-flag="safe"]');
-                safeButton.classList.add('active');
-                socket.emit('flag:swap', 'safe');
-                socket.emit('start:race'); // Emit start race signal
-            }
-        });
-    </script>
     <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f5f5f5;
+        }
+
+        .container {
+            max-width: 80%;
+            width: 300px; /* Adjust width for mobile screens */
+            background-color: #ffffff;
+            border: 1px solid #ccc;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
         .flag-button {
-            padding: 8px 16px;
-            margin: 5px;
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
             cursor: pointer;
             border: 1px solid #ccc;
             background-color: #f0f0f0;
+            text-align: center;
+            border-radius: 5px;
+            font-size: 16px;
         }
 
         .flag-button.active {
@@ -79,27 +44,104 @@
             color: white;
         }
 
-        .control-buttons, .end-race-session-button {
+        .end-race-session-button {
             display: none;
+            width: 100%;
+            padding: 10px;
+            margin-top: 10px;
+            cursor: pointer;
+            border: 1px solid #ccc;
+            background-color: #f0f0f0;
+            text-align: center;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+
+        .start-button {
+            width: 100%;
+            padding: 10px;
+            margin-top: 10px;
+            cursor: pointer;
+            border: 1px solid #ccc;
+            background-color: #f0f0f0;
+            text-align: center;
+            border-radius: 5px;
+            font-size: 16px;
         }
     </style>
-    <title>Race Control</title>
 </head>
 <body>
-<div>
-    <button class="start-button">Start race</button>
+<div class="container">
+    <div>
+        <button class="start-button">Start race</button>
+    </div>
+    <div class="control-buttons" style="display: none;">
+        <!-- Initially hidden with inline style -->
+        <button class="flag-button" data-flag="none">None</button>
+        <button class="flag-button" data-flag="safe">Safe</button>
+        <button class="flag-button" data-flag="hazard">Hazard</button>
+        <button class="flag-button" data-flag="danger">Danger</button>
+        <button class="flag-button" data-flag="finished">Finished</button>
+    </div>
+    <div>
+        <button class="end-race-session-button">End Race Session</button>
+    </div>
 </div>
-<div class="control-buttons">
-    <button class="flag-button" data-flag="none">None</button>
-    <button class="flag-button" data-flag="safe">Safe</button>
-    <button class="flag-button" data-flag="hazard">Hazard</button>
-    <button class="flag-button" data-flag="danger">Danger</button>
-    <button class="flag-button" data-flag="finished">Finished</button>
-</div>
-<div>
-    <button class="end-race-session-button">End Race Session</button>
-</div>
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const socket = io();
+        const startButton = document.querySelector('.start-button');
+        const controlButtons = document.querySelector('.control-buttons');
+        const endRaceSessionButton = document.querySelector('.end-race-session-button');
+        const buttons = controlButtons.querySelectorAll('.flag-button');
+
+        startButton.addEventListener('click', () => {
+            startNewRace();
+        });
+
+        buttons.forEach(button => {
+            button.addEventListener('click', () => {
+                buttons.forEach(b => {
+                    if (b === button) {
+                        b.classList.add('active');
+                    } else {
+                        b.classList.remove('active');
+                    }
+                });
+
+                const message = button.dataset.flag;
+                socket.emit('flag:swap', message);
+
+                if (message === 'finished') {
+                    controlButtons.style.display = 'none';
+                    endRaceSessionButton.style.display = 'block';
+                    socket.emit('finish:race');
+                }
+            });
+        });
+
+        endRaceSessionButton.addEventListener('click', () => {
+            endRaceSessionButton.style.display = 'none';
+            socket.emit('flag:swap', 'danger');
+            startButton.style.display = 'block';
+        });
+
+        socket.on('connect', () => {
+            console.log('Connected to server');
+        });
+
+        function startNewRace() {
+            startButton.style.display = 'none';
+            controlButtons.style.display = 'block';
+            const safeButton = controlButtons.querySelector('[data-flag="safe"]');
+            safeButton.classList.add('active');
+            socket.emit('flag:swap', 'safe');
+            socket.emit('start:race'); // Emit start race signal
+        }
+    });
+</script>
 </body>
 </html>
+
 
 

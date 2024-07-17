@@ -41,7 +41,7 @@
 - [x] When the race mode changes to "Finish", the race controls disappear, and a button appears to end the race session
 - [ ] When the Safety Official ends the race session, the next session appears on their interface
 - [x] When the race session is ended, the race mode changes to "Danger"
-- [ ] The Race Control interface is designed for a mobile interface
+- [x] The Race Control interface is designed for a mobile interface
 
 ### Lap-Line Tracker Interface (Lap-line Observer)
 
