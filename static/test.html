@@ -2,26 +2,26 @@
 <head>
     <script>
 
-        async function addRow() {
+        async function createdriver() {
             try {
                 const response = await fetch('/races', {
-                    method: 'POST',
+                    method: 'post',
                     headers: {
-                        'Content-Type': 'application/json'
+                        'content-type': 'application/json'
                     },
-                    body: JSON.stringify({id: 1})
+                    body: json.stringify({id: 1})
                 });
                 if (!response.ok) {
-                    const errorData = response.json();
+                    const errordata = response.json();
 
-                    throw new Error(errorData.error);
+                    throw new error(errordata.error);
                 }   
             } catch (error) {
-                console.error('Fetch error:', error);
+                console.error('fetch error:', error);
             }
         }
         
-        async function deleteRow() {
+        async function deleteDriver() {
             try {
 
                 const response = await fetch('/races', {
