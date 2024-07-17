@@ -13,13 +13,12 @@ let isDevMode = false;
 
 if (process.argv.length > 2 && process.argv[2] == 'dev') {
   isDevMode = true;
-} 
+}
 
 app.use(express.json());
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 app.use(express.static(__dirname));
-
 
 app.post('/races', appData.createRace);
 app.post('/drivers', appData.createDriver);

@@ -4,6 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <script src="/socket.io/socket.io.js"></script>
+    <script src="../fetchdata.js"></script>
     <script>
         class Driver {
             constructor(name, car) {
@@ -38,7 +39,6 @@
                 } else if (car < 1 || car > 8) {
                     return { error: true, code: 'overflow' };
                 } else {
-                    car = parseInt(car);
                     this.removeCar(car);
                 }
                 if (!name) {
@@ -46,6 +46,7 @@
                 }
                 if (car < 1 || car > 8) {
                 }
+                //NOTE: This might have to be in the top
                 if (this.availableCars.length === 0) {
                     return { error: true, code: 'capacity' };
                 }
@@ -60,7 +61,8 @@
 
                 const newDriver = new Driver(name, car);
                 this.drivers.push(newDriver);
-                return { error: false, code: null };
+
+                return { error: false, code: null, car: car };
             }
 
             removeDriver(name) {
@@ -117,6 +119,9 @@
                     const result = race.addDriver(driverName, carNum);
                     if (!result.error) {
                         updateRaceDisplay(race);
+                        if (result.car) {
+                            createDriver({ race_id: race.id, name: driverName, car: result.car});
+                        }
                     } else {
                         switch (result.code) {
                             case 'empty':
