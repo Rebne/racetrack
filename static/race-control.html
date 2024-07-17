@@ -5,17 +5,22 @@
     <script>
         document.addEventListener("DOMContentLoaded", () => {
             const socket = io();
-            const buttons = document.querySelectorAll('.flag-button');
-            let activeButton = null;
+            const startButton = document.querySelector('.start-button');
+            const controlButtons = document.querySelector('.control-buttons');
+            const endRaceSessionButton = document.querySelector('.end-race-session-button');
+            const buttons = controlButtons.querySelectorAll('.flag-button');
 
-            // Attach click event listeners to each button
+            startButton.addEventListener('click', () => {
+                startNewRace();
+            });
+
+            // Attach click event listeners to each control button
             buttons.forEach(button => {
                 button.addEventListener('click', () => {
                     // Activate the clicked button and deactivate others
                     buttons.forEach(b => {
                         if (b === button) {
                             b.classList.add('active');
-                            activeButton = b;
                         } else {
                             b.classList.remove('active');
                         }
@@ -23,17 +28,41 @@
 
                     const message = button.dataset.flag;
                     socket.emit('flag:swap', message);
-                    if (message === 'safe') {
-                        socket.emit('start:race'); // Emit start race signal
-                    } else {
-                        button.classList.add('active');
+
+                    // Check if the race mode is "Finished"
+                    if (message === 'finished') {
+                        controlButtons.style.display = 'none';
+                        endRaceSessionButton.style.display = 'block';
+                        socket.emit('finish:race');
                     }
                 });
+            });
+
+            endRaceSessionButton.addEventListener('click', () => {
+                // Hide the end race session button
+                endRaceSessionButton.style.display = 'none';
+
+                // Set race mode to "Danger"
+                socket.emit('flag:swap', 'danger');
+                // Display the start button to allow a new race session to start
+                startButton.style.display = 'block';
             });
 
             socket.on('connect', () => {
                 console.log('Connected to server');
             });
+
+            function startNewRace() {
+                // Hide the start button and show the control buttons
+                startButton.style.display = 'none';
+                controlButtons.style.display = 'block';
+
+                // Set race mode to "Safe"
+                const safeButton = controlButtons.querySelector('[data-flag="safe"]');
+                safeButton.classList.add('active');
+                socket.emit('flag:swap', 'safe');
+                socket.emit('start:race'); // Emit start race signal
+            }
         });
     </script>
     <style>
@@ -49,16 +78,28 @@
             background-color: #4CAF50;
             color: white;
         }
+
+        .control-buttons, .end-race-session-button {
+            display: none;
+        }
     </style>
-    <title>Index</title>
+    <title>Race Control</title>
 </head>
 <body>
 <div>
+    <button class="start-button">Start race</button>
+</div>
+<div class="control-buttons">
     <button class="flag-button" data-flag="none">None</button>
     <button class="flag-button" data-flag="safe">Safe</button>
     <button class="flag-button" data-flag="hazard">Hazard</button>
     <button class="flag-button" data-flag="danger">Danger</button>
     <button class="flag-button" data-flag="finished">Finished</button>
 </div>
+<div>
+    <button class="end-race-session-button">End Race Session</button>
+</div>
 </body>
 </html>
+
+
