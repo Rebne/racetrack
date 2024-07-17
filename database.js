@@ -14,32 +14,31 @@ const db = new sqlite3.Database(db_name, (err) => {
 });
 
 db.run('CREATE TABLE IF NOT EXISTS races (id INTEGER)');
-db.run('CREATE TABLE IF NOT EXISTS drivers (id INTEGER, race_id INTEGER, name TEXT, car INTEGER)');
+db.run('CREATE TABLE IF NOT EXISTS drivers (id INTEGER PRIMARY KEY AUTOINCREMENT, race_id INTEGER, name TEXT, car INTEGER)');
 
 export default db;
 
 // implementing CRUD for tables
-// TODO: change status codes to 5xx from 4xx
-//
+
 export function createRace(req, res) {
     const id = req.body.id;
 
     const sql = 'INSERT INTO races (id) VALUES (?)';
     db.run(sql, id, function (err) {
         if (err) {
-            res.status(400).json({ error: err.message });
+            res.status(500).json({ error: err.message });
             return;
         }
         res.status(201);
     });
 }
 export function createDriver(req, res) {
-    const { id, race_id, name, car } = req.body;
+    const { race_id, name, car } = req.body;
 
-    const sql = 'INSERT INTO drivers (id, race_id, name, car) VALUES (?,?,?,?)'
-    db.run(sql, [id, race_id, name, car], function (err) {
+    const sql = 'INSERT INTO drivers (race_id, name, car) VALUES (?,?,?)'
+    db.run(sql, [race_id, name, car], function (err) {
         if (err) {
-            res.status(400).json({ error: err.message });
+            res.status(500).json({ error: err.message });
             return;
         }
         res.status(201);
@@ -52,7 +51,7 @@ export function updateDriver(req, res) {
     const sql = 'UPDATE drivers SET name = ?, car = ? WHERE race_id = ? AND name = ? OR car = ?';
     db.run(sql, [name, car, race_id, name, car], function (err) {
         if (err) {
-            res.status(400).json({error: err.message});
+            res.status(500).json({error: err.message});
             return;
         }
         res.status(200);
@@ -65,7 +64,7 @@ export function readRace(req, res) {
     const sql = 'SELECT * FROM drivers WHERE race_id = ?';
     db.all(sql, race_id, function (err, rows) {
         if(err) {
-            res.status(400).json({error: err.message});
+            res.status(500).json({error: err.message});
             return;
         }
         res.status(200).json(rows);
@@ -80,7 +79,7 @@ export function deleteDriver(req, res) {
     const sql = 'DELETE FROM drivers WHERE name = ?';
     db.run(sql, name, function (err) {
         if (err) {
-            res.status(400).json({error: err.message});
+            res.status(500).json({error: err.message});
             return;
         }
         res.status(200);
@@ -95,7 +94,7 @@ export function deleteRace(req, res) {
     const sql = `DELETE FROM races WHERE id = ?`;
     db.run(sql, id, function (err) {
         if (err) {
-            res.status(400).json({ error: err.message });
+            res.status(500).json({ error: err.message });
             return;
         }
         res.status(200);
