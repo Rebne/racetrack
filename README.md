@@ -63,7 +63,7 @@
 
 ### Race Countdown and Flags (Race Driver)
 
-- [ ] The countdown timer runs for 1 minute instead of 10 minutes in dev mode
+- [x] The countdown timer runs for 1 minute instead of 10 minutes in dev mode
 - [ ] The Race Flag interface displays the current race status (green, yellow, red, or chequered)
 
 ### General System Requirements

@@ -49,8 +49,12 @@ app.get('/front-desk', (_, res) => {
 });
 
 app.get('/race-countdown', (_, res) => {
-  res.sendFile(join(__dirname,'static', 'race-countdown.html'));
-})
+  const countdownFilePath = isDevMode
+      ? join(__dirname, 'static', 'race-countdown-dev.html')
+      : join(__dirname, 'static', 'race-countdown.html');
+
+  res.sendFile(countdownFilePath);
+});
 
 app.get('/lap-line-tracker', (_, res) => {
   res.sendFile(join(__dirname,'static', 'lap-line-tracker.html'));
