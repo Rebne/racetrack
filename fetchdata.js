@@ -1,4 +1,4 @@
-async function createDriver(driver_data) {
+async function createDriverInDB(driver_data) {
     try {
         const response = await fetch('/drivers', {
             method: 'POST',
@@ -16,7 +16,7 @@ async function createDriver(driver_data) {
     }
 }
 
-async function createRace(race_id) {
+async function createRaceInDB(race_id) {
     try {
         const response = await fetch('/races', {
             method: 'POST',
@@ -34,7 +34,7 @@ async function createRace(race_id) {
     }
 }
 
-async function getRaces() {
+async function getRacesInDB() {
     try {
         const response = await fetch('/races', {
             method: 'GET'
@@ -52,7 +52,7 @@ async function getRaces() {
     }
 }
 
-async function getDrivers(race_id) {
+async function getDriversInDB(race_id) {
     try {
         const response = await fetch(`/drivers/${race_id}`, {
             method: 'GET'
@@ -71,7 +71,7 @@ async function getDrivers(race_id) {
     }
 }
 
-async function updateDriver(driver_data) {
+async function updateDriverInDB(driver_data) {
     try {
         const response = await fetch('/drivers', {
             method: 'PUT', 
@@ -89,7 +89,7 @@ async function updateDriver(driver_data) {
     }
 }
 
-async function deleteDriver(driver_name) {
+async function deleteDriverInDB(driver_name) {
     try {
         const response = await fetch('/drivers', {
             method: 'DELETE', 
@@ -107,7 +107,7 @@ async function deleteDriver(driver_name) {
     }
 }
 
-async function deleteRace(race_id) {
+async function deleteRaceInDB(race_id) {
     try {
         const response = await fetch('/races', {
             method: 'DELETE', 

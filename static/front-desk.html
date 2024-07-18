@@ -5,115 +5,222 @@
     <meta charset="UTF-8">
     <script src="/socket.io/socket.io.js"></script>
     <script src="../fetchdata.js"></script>
+    <script src="../models.js"></script>
     <script>
-        class Driver {
-            constructor(name, car) {
-                this.name = name;
-                this.car = car;
-            }
-        }
-        class Race {
-            constructor(id, drivers = []) {
-                this.id = id;
-                this.drivers = drivers;
-                this.availableCars =
-                    [8, 7, 6, 5, 4, 3, 2, 1];
-            }
 
-            get getDrivers() {
-                return this.drivers;
-            }
 
-            removeCar(car) {
-                for (let i = 0; i < this.availableCars.length; i++) {
-                    if (this.availableCars[i] === car) {
-                        this.availableCars.splice(i, 1);
-                        break;
-                    }
-                }
-            }
+        let races = [];
+        let idCounter = 1;
 
-            addDriver(name, car = null) {
-                if (!car) {
-                    car = this.availableCars.pop();
-                } else if (car < 1 || car > 8) {
-                    return { error: true, code: 'overflow' };
-                } else {
-                    this.removeCar(car);
-                }
-                if (!name) {
-                    return { error: true, code: 'empty' };
-                }
-                if (car < 1 || car > 8) {
-                }
-                //NOTE: This might have to be in the top
-                if (this.availableCars.length === 0) {
-                    return { error: true, code: 'capacity' };
-                }
-                const matchingDriver = this.drivers.filter((driver) => driver.name === name);
-                if (matchingDriver.length > 0) {
-                    return { error: true, code: 'name' };
-                }
-                const matchingCar = this.drivers.filter((driver) => driver.car === car);
-                if (matchingCar.length > 0) {
-                    return { error: true, code: 'car' };
-                }
+        //Race methods: addDriver, removeCar, removeDriver, getDrivers
 
-                const newDriver = new Driver(name, car);
-                this.drivers.push(newDriver);
-
-                return { error: false, code: null, car: car };
-            }
-
-            removeDriver(name) {
-                const initialLength = this.drivers.length;
-                const removedDriver = this.drivers.find(driver => driver.name === name);
-                if (removedDriver) {
-                    this.availableCars.push(removedDriver.car);
-                    this.drivers = this.drivers.filter(driver => driver.name !== name);
-                }
-                return this.drivers.length !== initialLength;
+        function handleAddDriverErrors(code) {
+            switch (code) {
+                case 'empty':
+                    alert('Driver name cannot be empty');
+                    break;
+                case 'overflow':
+                    alert('Invalid number entered\nAvailable car numbers are in range 1 - 8');
+                    break;
+                case 'capacity':
+                    alert('Maximum number of drivers (8) exceeded');
+                    break;
+                case 'name':
+                    alert('Driver name already taken');
+                    break;
+                case 'car':
+                    alert('Car number already taken');
+                    break;
             }
         }
 
-        async function readAllRacesFromDB(array) {
-            let races;
-            try {
-                races = await getRaces();
-                console.log(races);
-            } catch (error) {
-                console.log(error);
+        function getInputFromDriverForm(race) {
+            const driverInput = document.getElementById(`driver-input-${race.id}`);
+            const carInput = document.getElementById(`car-input-${race.id}`);
+            const driverName = driverInput.value;
+            const carNum = carInput.value;
+            // Resetting values for the edit button to function as it should
+            driverInput.value = '';
+            carInput.value = '';
+
+            return {name: driverName, car: carNum};
+
+        }
+
+        function addNewDriver(race) {
+            const driverData = getInputFromDriverForm(race);
+            const result = race.addDriver(driverData.name, driverData.car);
+            if (!result.error) {
+                updateRaceDisplay(race);
+                if (result.car) {
+                    createDriverInDB({ race_id: race.id, name: driverName, car: result.car });
+                }
+            } else {
+                handleAddDriverErrors(result.code);
             }
 
-            for (const element of races) {
-                const race_id = element.id;
-                const race = new Race(race_id);
-                array.push(race);
 
-                let drivers;
-                try { 
-                    drivers = await getDrivers(race_id)
-                } catch (error) {
-                    console.log(error);
-                }
+        }
+        function addDriverFormForRaceDiv(race) {
+
+            const driverForm = document.createElement('form');
+            driverForm.innerHTML = `
+                    <input type="text" placeholder="Driver Name" class="driver-input" id="driver-input-${race.id}">
+                    <input type="text" placeholder="Car" class="car-input" id="car-input-${race.id}">
+                    <button type="submit" class="add-driver-button" >Add Driver</button>`;
+
+            driverForm.onsubmit = (e) => {
+                e.preventDefault();
+                addNewDriver(race);
+            };
+
+            return driverForm;
+        }
+
+
+        function closeButtonForRaceDiv(race) {
+            const closeButton = document.createElement('button');
+            closeButton.className = 'close-button';
+            closeButton.id = `close-button-${race.id}`;
+            closeButton.textContent = 'X';
+            closeButton.addEventListener('click', () => {
+                removeRaceDiv(race.id);
+                deleteRaceInDB(race.id);
+            });
+
+            return closeButton;
+        }
+
+        function createRaceDiv(race) {
+
+            const raceDiv = document.createElement('div');
+            raceDiv.className = 'race';
+            raceDiv.id = `race-${race.id}`;
+
+            const raceTitle = document.createElement('h2');
+            raceTitle.textContent = `Race ${race.id}`;
+            raceDiv.appendChild(raceTitle);
+
+            const addDriverForm = addDriverFormForRaceDiv(race);
+            raceDiv.appendChild(addDriverForm);
+
+            const closeButton = closeButtonForRaceDiv(race);
+            raceDiv.appendChild(closeButton);
+
+            document.body.appendChild(raceDiv);
+            updateAddDiv();
+        }
+
+        function removeRaceDiv(raceID) {
+            const raceToRemove = document.getElementById(`race-${raceID}`);
+            raceToRemove.remove();
+        }
+
+
+        function updateAddDiv(race) {
+            let addRaceDiv = document.getElementById('add-race');
+            if (!addRaceDiv) {
+                addRaceDiv = document.createElement('div');
+                addRaceDiv.className = 'race';
+                addRaceDiv.id = 'add-race';
+                addRaceDiv.textContent = '+';
+                addRaceDiv.addEventListener('click', () => {
+                    createRaceDiv(race);
+                });
+            }
+            document.body.appendChild(addRaceDiv);
+        }
+
+        function removeDriverDiv(race, driver) {
+            const driverRemoved = race.removeDriver(driver.name);
+            if (driverRemoved) {
+                updateRaceDisplay(race);
+            } else {
+                alert('Driver was not removed with updateRaceDisplay for some reason')
+            }
+        }
+
+        // FIXME: DriverDiv does not scale properly with current setup
+
+        //TODO: Next race display   has to be updated with changes made to the raceDiv that is next
+        function updateRaceDisplay(race) {
+            const raceDiv = document.getElementById(`race-${race.id}`);
+            const existingDriver = raceDiv.querySelectorAll('.driver');
+            existingDriver.forEach((driver) => driver.remove());
+
+            race.getDrivers.forEach((driver) => {
+                const driverDiv = document.createElement('div');
+                driverDiv.className = 'driver';
+                driverDiv.textContent = `${driver.name} - Car ${driver.car}`;
+                driverDiv.id = `driver-${race.id}-${driver.name}`;
+                const buttons = document.createElement('div');
+                buttons.className = 'button-container';
+
+                const deleteButton = document.createElement('button');
+                deleteButton.className = 'delete-driver-button driver-button';
+                deleteButton.textContent = 'Del';
+                deleteButton.addEventListener('click', () => {
+                    removeDriverDiv(race, driver);
+                    //Deleting entry from DB
+                    deleteDriver(driver.name);
+                });
+
+                const editButton = document.createElement('button');
+                editButton.className = 'edit-driver-button driver-button';
+                editButton.textContent = 'Edit';
+                editButton.addEventListener('click', () => {
+                    const driverInput = document.getElementById(`driver-name-${race.id}`);
+                    const carInput = document.getElementById(`car-num-${race.id}`);
+                    driverInput.value = driver.name;
+                    carInput.value = driver.car;
+                    removeDriverDiv(race, driver);
+                    //Deleting entry from DB
+                    deleteDriver(driver.name);
+                    driverInput.focus();
+                });
+
+                buttons.appendChild(editButton);
+                buttons.appendChild(deleteButton);
+                driverDiv.appendChild(buttons);
+                raceDiv.appendChild(driverDiv);
+            });
+            updateAddDiv();
+        }
+
+        // This function reads all the race data from DB and return an array of all races as result
+        async function readAllRacesFromDB() {
+
+            let result = [];
+
+            const racesFromDB = await getRacesInDB();
+
+            for (const row of racesFromDB) {
+
+                const race = new Race(row.id);
+                // array needed for keeping track of all the races
+                result.push(race);
+
+                const drivers = await getDriversInDB(row.id)
 
                 drivers.forEach((driver) => {
                     race.addDriver(driver.name, driver.car);
                 });
 
-                makeRace(race_id);
+                createRaceDiv(race);
+                updateRaceDisplay(race)
             }
-            
-            array.sort((a, b) => {
+
+            //SORT for race with smallest id being next in line
+            result.sort((a, b) => {
                 if (a.id < b.id) return -1;
                 if (a.id > b.id) return 1;
                 return 0;
             });
+
+            return result;
         }
 
         document.addEventListener("DOMContentLoaded", () => {
-            let races = [];
-            let idCounter = 1;
 
             const socket = io();
 
@@ -122,159 +229,13 @@
 
             });
 
-
-            function makeRace(num) {
-                if (num) {
-                    const race = new Race(num);
-                } else {
-                    const race = new Race(idCounter);
-                    createRace(idCounter);
-                    idCounter++;
-                }
-
-                races.push(race);
-                // Making an entry in DB
-                const raceDiv = document.createElement('div');
-                raceDiv.className = 'race';
-                raceDiv.id = `race-${race.id}`;
-
-                const raceTitle = document.createElement('h2');
-                raceTitle.textContent = `Race ${race.id}`;
-                raceDiv.appendChild(raceTitle);
-
-                const addDriverForm = document.createElement('form');
-                addDriverForm.innerHTML = `
-                    <input type="text" placeholder="Driver Name" class="driver-input" id="driver-name-${race.id}">
-                    <input type="text" placeholder="Car" class="car-input" id="car-num-${race.id}">
-                    <button type="submit" class="add-driver-button" >Add Driver</button>
-                `;
-                addDriverForm.onsubmit = (e) => {
-                    e.preventDefault();
-                    const driverInput = document.getElementById(`driver-name-${race.id}`);
-                    const carInput = document.getElementById(`car-num-${race.id}`);
-                    const driverName = driverInput.value;
-                    const carNum = carInput.value;
-                    // Resetting values for the edit button to function as it should
-                    driverInput.value = '';
-                    carInput.value = '';
-
-                    const result = race.addDriver(driverName, carNum);
-                    if (!result.error) {
-                        updateRaceDisplay(race);
-                        if (result.car) {
-                            createDriver({ race_id: race.id, name: driverName, car: result.car });
-                        }
-                    } else {
-                        switch (result.code) {
-                            case 'empty':
-                                alert('Driver name cannot be empty');
-                                break;
-                            case 'overflow':
-                                alert('Invalid number entered\nAvailable car numbers are in range 1 - 8');
-                                break;
-                            case 'capacity':
-                                alert('Maximum number of drivers (8) exceeded');
-                                break;
-                            case 'name':
-                                alert('Driver name already taken');
-                                break;
-                            case 'car':
-                                alert('Car number already taken');
-                                break;
-                        }
-                    }
-                };
-                raceDiv.appendChild(addDriverForm);
-                const closeButton = document.createElement('button');
-                closeButton.className = 'close-button';
-                closeButton.id = `close-button-${race.id}`;
-                closeButton.textContent = 'X';
-                closeButton.addEventListener('click', () => {
-                    removeRace(race.id);
-                    //Deletring entry from DB
-                    deleteRace(race.id);
-                });
-                raceDiv.appendChild(closeButton);
-
-                document.body.appendChild(raceDiv);
-                updateAddRaceDiv();
-
-            }
-
-            function removeRace(raceID) {
-                const raceToRemove = document.getElementById(`race-${raceID}`);
-                raceToRemove.remove();
-            }
-
-            function updateAddRaceDiv() {
-                let addRaceDiv = document.getElementById('add-race');
-                if (!addRaceDiv) {
-                    addRaceDiv = document.createElement('div');
-                    addRaceDiv.className = 'race';
-                    addRaceDiv.id = 'add-race';
-                    addRaceDiv.textContent = '+';
-                    addRaceDiv.onclick = makeRace;
-                }
-                document.body.appendChild(addRaceDiv);
-            }
-            function removeDriverDiv(race, driver) {
-                const driverRemoved = race.removeDriver(driver.name);
-                if (driverRemoved) {
-                    updateRaceDisplay(race);
-                } else {
-                    alert('Driver was not removed with updateRaceDisplay for some reason')
-                }
-            }
-
-            // FIXME: DriverDiv does not scale properly with current setup
-
-            //TODO: Next race display   has to be updated with changes made to the raceDiv that is next
-            function updateRaceDisplay(race) {
-                const raceDiv = document.getElementById(`race-${race.id}`);
-                const existingDriver = raceDiv.querySelectorAll('.driver');
-                existingDriver.forEach((driver) => driver.remove());
-
-                race.getDrivers.forEach((driver) => {
-                    const driverDiv = document.createElement('div');
-                    driverDiv.className = 'driver';
-                    driverDiv.textContent = `${driver.name} - Car ${driver.car}`;
-                    driverDiv.id = `driver-${race.id}-${driver.name}`;
-                    const buttons = document.createElement('div');
-                    buttons.className = 'button-container';
-
-                    const deleteButton = document.createElement('button');
-                    deleteButton.className = 'delete-driver-button driver-button';
-                    deleteButton.textContent = 'Del';
-                    deleteButton.addEventListener('click', () => {
-                        removeDriverDiv(race, driver);
-                        //Deleting entry from DB
-                        deleteDriver(driver.name);
-                    });
-
-                    const editButton = document.createElement('button');
-                    editButton.className = 'edit-driver-button driver-button';
-                    editButton.textContent = 'Edit';
-                    editButton.addEventListener('click', () => {
-                        const driverInput = document.getElementById(`driver-name-${race.id}`);
-                        const carInput = document.getElementById(`car-num-${race.id}`);
-                        driverInput.value = driver.name;
-                        carInput.value = driver.car;
-                        removeDriverDiv(race, driver);
-                        //Deleting entry from DB
-                        deleteDriver(driver.name);
-                        driverInput.focus();
-                    });
-
-                    buttons.appendChild(editButton);
-                    buttons.appendChild(deleteButton);
-                    driverDiv.appendChild(buttons);
-                    raceDiv.appendChild(driverDiv);
-                });
-                updateAddRaceDiv();
-            }
-
             readAllRacesFromDB(races);
-            updateAddRaceDiv();
+            updateAddDiv();
+            if (races) {
+                console.log(races);
+            } else {
+                console.log('No races');
+            }
         });
     </script>
     <style>
