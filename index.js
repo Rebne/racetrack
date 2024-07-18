@@ -20,12 +20,13 @@ app.use(express.json());
 const __dirname = dirname(fileURLToPath(import.meta.url));
 app.use(express.static(__dirname));
 
-app.post('/races', appData.createRace);
-app.post('/drivers', appData.createDriver);
-app.put('/drivers', appData.updateDriver);
-app.get('/races', appData.readRace);
 app.delete('/drivers', appData.deleteDriver)
 app.delete('/races', appData.deleteRace);
+app.post('/drivers', appData.createDriver);
+app.post('/races', appData.createRace);
+app.get('/races', appData.readRaces);
+app.get('/drivers/:id', appData.readDrivers);
+app.put('/drivers', appData.updateDriver);
 
 app.get('/test', (_, res) => {
   res.sendFile(join(__dirname, 'static', 'test.html'));

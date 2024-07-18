@@ -76,6 +76,41 @@
             }
         }
 
+        async function readAllRacesFromDB(array) {
+            let races;
+            try {
+                races = await getRaces();
+                console.log(races);
+            } catch (error) {
+                console.log(error);
+            }
+
+            for (const element of races) {
+                const race_id = element.id;
+                const race = new Race(race_id);
+                array.push(race);
+
+                let drivers;
+                try { 
+                    drivers = await getDrivers(race_id)
+                } catch (error) {
+                    console.log(error);
+                }
+
+                drivers.forEach((driver) => {
+                    race.addDriver(driver.name, driver.car);
+                });
+
+                makeRace(race_id);
+            }
+            
+            array.sort((a, b) => {
+                if (a.id < b.id) return -1;
+                if (a.id > b.id) return 1;
+                return 0;
+            });
+        }
+
         document.addEventListener("DOMContentLoaded", () => {
             let races = [];
             let idCounter = 1;
@@ -87,11 +122,18 @@
 
             });
 
-            function createRace() {
-                const race = new Race(idCounter);
-                races.push(race);
-                idCounter++;
 
+            function makeRace(num) {
+                if (num) {
+                    const race = new Race(num);
+                } else {
+                    const race = new Race(idCounter);
+                    createRace(idCounter);
+                    idCounter++;
+                }
+
+                races.push(race);
+                // Making an entry in DB
                 const raceDiv = document.createElement('div');
                 raceDiv.className = 'race';
                 raceDiv.id = `race-${race.id}`;
@@ -120,7 +162,7 @@
                     if (!result.error) {
                         updateRaceDisplay(race);
                         if (result.car) {
-                            createDriver({ race_id: race.id, name: driverName, car: result.car});
+                            createDriver({ race_id: race.id, name: driverName, car: result.car });
                         }
                     } else {
                         switch (result.code) {
@@ -149,6 +191,8 @@
                 closeButton.textContent = 'X';
                 closeButton.addEventListener('click', () => {
                     removeRace(race.id);
+                    //Deletring entry from DB
+                    deleteRace(race.id);
                 });
                 raceDiv.appendChild(closeButton);
 
@@ -169,7 +213,7 @@
                     addRaceDiv.className = 'race';
                     addRaceDiv.id = 'add-race';
                     addRaceDiv.textContent = '+';
-                    addRaceDiv.onclick = createRace;
+                    addRaceDiv.onclick = makeRace;
                 }
                 document.body.appendChild(addRaceDiv);
             }
@@ -201,7 +245,11 @@
                     const deleteButton = document.createElement('button');
                     deleteButton.className = 'delete-driver-button driver-button';
                     deleteButton.textContent = 'Del';
-                    deleteButton.addEventListener('click', () => removeDriverDiv(race, driver));
+                    deleteButton.addEventListener('click', () => {
+                        removeDriverDiv(race, driver);
+                        //Deleting entry from DB
+                        deleteDriver(driver.name);
+                    });
 
                     const editButton = document.createElement('button');
                     editButton.className = 'edit-driver-button driver-button';
@@ -212,6 +260,8 @@
                         driverInput.value = driver.name;
                         carInput.value = driver.car;
                         removeDriverDiv(race, driver);
+                        //Deleting entry from DB
+                        deleteDriver(driver.name);
                         driverInput.focus();
                     });
 
@@ -223,6 +273,7 @@
                 updateAddRaceDiv();
             }
 
+            readAllRacesFromDB(races);
             updateAddRaceDiv();
         });
     </script>
