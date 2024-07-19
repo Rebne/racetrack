@@ -7,6 +7,7 @@ async function createDriverInDB(driver_data) {
             },
             body: JSON.stringify(driver_data)
         });
+        
         if (!response.ok) {
             const errorData =  await response.json();
             throw new Error(errorData.error);
