@@ -35,14 +35,14 @@ export function createRace(req, res) {
 export function createDriver(req, res) {
     const { race_id, name, car } = req.body;
 
-    const sql = 'INSERT INTO drivers (race_id, name, car) VALUES (?,?,?);'
+    const sql = 'INSERT INTO drivers (race_id, name, car) VALUES (?,?,?);';
     db.run(sql, [race_id, name, car], function (err) {
         if (err) {
             res.status(500).json({ error: err.message });
             return;
         }
         res.status(201);
-    })
+    });
 }
 
 export function updateDriver(req, res) {
