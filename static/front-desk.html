@@ -249,6 +249,7 @@
             return result;
         }
 
+
         document.addEventListener("DOMContentLoaded", () => {
 
             const socket = io();
@@ -258,8 +259,23 @@
 
             });
 
-            readAllRacesFromDB(races);
+            readAllRacesFromDB().then(function (result) {
+                races = result;
+                let max = 0;
+                for (let i = 0; i < result.length; i++) {
+                    race = result[i]
+                    if (race.id > max) {
+                        max = race.id
+                    }
+                }
+                idCounter = max;
+                
+            });
+            
+            // Error on line 100 race is undefined. Should change all the call stack to use race.id instead of race object
             updateAddDiv();
+
+
         });
     </script>
     <style>
