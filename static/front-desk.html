@@ -118,8 +118,7 @@
             raceToRemove.remove();
         }
 
-
-        function updateAddDiv(race) {
+        function updateAddDiv() {
             let addRaceDiv = document.getElementById('add-race');
             if (!addRaceDiv) {
                 addRaceDiv = document.createElement('div');
@@ -127,7 +126,8 @@
                 addRaceDiv.id = 'add-race';
                 addRaceDiv.textContent = '+';
                 addRaceDiv.addEventListener('click', () => {
-                    createRaceDiv(race);
+                    nextRace = new Race(idCounter);
+                    createRaceDiv(nextRace);
                 });
             }
             document.body.appendChild(addRaceDiv);
@@ -214,7 +214,7 @@
                 driverDiv.appendChild(buttons);
                 raceDiv.appendChild(driverDiv);
             });
-            updateAddDiv(race);
+            updateAddDiv();
         }
 
         // This function reads all the race data from DB and return an array of all races as result
@@ -273,6 +273,7 @@
             });
             
             // Error on line 100 race is undefined. Should change all the call stack to use race.id instead of race object
+
             updateAddDiv();
 
 
