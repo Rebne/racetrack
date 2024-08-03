@@ -128,6 +128,7 @@
                 addRaceDiv.addEventListener('click', () => {
                     nextRace = new Race(idCounter);
                     createRaceDiv(nextRace);
+                    createRaceInDB(idCounter);
                 });
             }
             document.body.appendChild(addRaceDiv);

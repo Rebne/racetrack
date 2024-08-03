@@ -26,6 +26,10 @@ class Race {
     }
 
     addDriver(name, car = null) {
+        if (this.availableCars.length === 0) {
+            return { error: true, code: 'capacity' };
+        }
+        
         if (!car) {
             car = this.availableCars.pop();
         } else if (car < 1 || car > 8) {
@@ -38,10 +42,7 @@ class Race {
         }
         if (car < 1 || car > 8) {
         }
-        //NOTE: This might have to be in the top
-        if (this.availableCars.length === 0) {
-            return { error: true, code: 'capacity' };
-        }
+
         const matchingDriver = this.drivers.filter((driver) => driver.name === name);
         if (matchingDriver.length > 0) {
             return { error: true, code: 'name' };
