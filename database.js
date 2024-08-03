@@ -60,9 +60,9 @@ export function updateDriver(req, res) {
 
 export function readRaces(_, res) {
     const sql = 'SELECT * FROM races;';
-    db.all(sql, [], function(err, rows) {
+    db.all(sql, [], function (err, rows) {
         if (err) {
-            res.status(500).json({error: err.message});
+            res.status(500).json({ error: err.message });
             return;
         }
         res.status(200).json(rows);
@@ -100,15 +100,21 @@ export function deleteDriver(req, res) {
 }
 
 export function deleteRace(req, res) {
-    const id = req.body.id;
+    const { id } = req.body;
 
-    const sql = `DELETE FROM races WHERE id = ?;
-                 DELETE FROM drivers WHERE race_id = ?;`;
-    db.run(sql, id, function (err) {
+    db.run("DELETE FROM races WHERE id = ?;", id, function (err) {
         if (err) {
             res.status(500).json({ error: err.message });
             return;
         }
-        res.status(200);
     });
+
+    db.run("DELETE FROM drivers WHERE race_id = ?;", id, function (err) {
+        if (err) {
+            res.status(500).json({ error: err.message });
+            return;
+        }
+    });
+
+    res.status(200);
 }
