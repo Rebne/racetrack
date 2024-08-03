@@ -97,7 +97,7 @@ async function deleteDriverInDB(driver_name) {
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify(driver_name)
+            body: JSON.stringify({name: driver_name})
         });
         if (!response.ok) {
             const errorData = await response.json();
