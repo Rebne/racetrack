@@ -57,12 +57,8 @@
 <div class="container">
     <h1>Lap-Line Tracker</h1>
     <p>Tap on the button for each car to record a lap.</p>
-    <div class="button-wrapper">
-        <!-- Replace these with dynamically generated buttons for each car -->
-        <!-- Example buttons for cars -->
-        <button class="car-button" data-car="Car 1">Car 1</button>
-        <button class="car-button" data-car="Car 2">Car 2</button>
-        <button class="car-button" data-car="Car 3">Car 3</button>
+    <div class="button-wrapper" id="button-wrapper">
+        <!-- Buttons will be dynamically generated here -->
     </div>
 </div>
 
@@ -70,16 +66,42 @@
 <script>
     document.addEventListener("DOMContentLoaded", () => {
         const socket = io();
+        const buttonWrapper = document.getElementById('button-wrapper');
 
-        // Add event listeners to each car button
-        const carButtons = document.querySelectorAll('.car-button');
-        carButtons.forEach(button => {
-            button.addEventListener('click', () => {
-                const carName = button.getAttribute('data-car');
-                console.log(`Lap recorded for ${carName}`);
-                // Emit an event to the server indicating a lap has been recorded for this car
-                socket.emit('lap-recorded', carName);
+        // Function to create buttons dynamically
+        function createButtons(raceData) {
+            buttonWrapper.style.display = 'flex'; // Show buttons on race start
+
+            // Clear previous buttons
+            buttonWrapper.innerHTML = '';
+
+            // Generate buttons dynamically based on raceData
+            raceData.cars.forEach(car => {
+                const button = document.createElement('button');
+                button.className = 'car-button';
+                button.setAttribute('data-car', car.name);
+                button.textContent = car.name;
+
+                button.addEventListener('click', () => {
+                    console.log(`Lap recorded for ${car.name}`);
+                    socket.emit('lap-recorded', { carName: car.name });
+                });
+
+                buttonWrapper.appendChild(button);
             });
+        }
+
+        // Handle race start event
+        socket.on('start:race', (raceData) => {
+            createButtons(raceData);
+        });
+
+        // Request current race data when connected, in case the race has already started
+        socket.emit('request:current-race');
+        socket.on('current:race', (raceData) => {
+            if (raceData.cars && raceData.cars.length > 0) {
+                createButtons(raceData);
+            }
         });
 
         socket.on('connect', () => {
@@ -88,5 +110,4 @@
     });
 </script>
 </body>
-
 </html>

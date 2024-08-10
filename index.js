@@ -85,6 +85,19 @@ io.on('connection', (socket) => {
     console.log(args);
   })
 
+  // Handle 'create:race' event
+  socket.on('create:race', (data) => {
+    console.log('New race created:', data);
+    // Broadcast the new race to all connected clients
+    io.emit('new:race', data);
+  });
+
+  // Handle lap recording
+  socket.on('lap-recorded', (data) => {
+    console.log(`Lap recorded for car: ${data.carName}`);
+    // Further processing, like updating lap counts, could go here
+  });
+
   socket.on('disconnect', () => {
     console.log('user disconnected');
   });
