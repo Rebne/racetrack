@@ -111,20 +111,6 @@
 
             document.body.appendChild(raceDiv);
             updateAddDiv();
-
-            // Emit race data to lap-line-tracker.html
-            socket.emit('race-data', {
-                raceId: race.id,
-                drivers: race.getDrivers.map(driver => ({
-                    name: driver.name,
-                    car: driver.car
-                }))
-            });
-            // Emit 'create:race' event to notify server about the new race creation
-            socket.emit('create:race', {
-                id: race.id,
-                cars: race.getDrivers.map(driver => driver.name)
-            });
         }
 
         function removeRaceDiv(raceID) {
