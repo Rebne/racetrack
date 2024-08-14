@@ -3,12 +3,39 @@
 <head>
     <title>Next Race</title>
     <script src="/socket.io/socket.io.js"></script>
+    <script src="../fetchdata.js"></script>
     <script>
         const socket = io();
+
+        function min(x, y) {
+            if (x < y) {
+                return x
+            } else {
+                return y
+            }
+        }
+
+        function getNextRace() {
+
+            races = getRacesInDB();
+
+            if (!races) {return -1};
+
+            nextRace = races[0].id;
+            for (const row of races) {
+                nextRace = min(nextRace, row.id);
+            }
+
+            return nextRace
+
+        }
+
+        
 
         socket.on('connect', () => {
             console.log('Connected to server');
         });
+
 
         socket.on('update:nextRace', (race) => {
             const nextRaceDiv = document.getElementById('next-race');
@@ -22,6 +49,21 @@
             } else {
                 nextRaceDiv.innerHTML = '<h2>No races in queue</h2>';
             }
+        });
+
+        nextRace = getNextRace();
+
+        let drivers;
+
+        if (nextRace != -1) {
+            drivers = getDriversInDB(nextRace)
+        }
+
+        if (drivers) {
+            generateDrivers()
+        }
+        document.addEventListener('DOMContentLoaded', () => {
+
         });
     </script>
 </head>
