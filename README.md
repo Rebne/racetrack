@@ -19,10 +19,10 @@
 
 ### Next Race Display (Race Driver)
 
-- [ ] The upcoming race session is displayed on the Next Race display
+- [x] The upcoming race session is displayed on the Next Race display
 - [ ] The Next Race display switches to the subsequent race, once the current race is safe to start
-- [ ] The Next Race display shows the drivers names, and the cars they're assigned to
-- [ ] If there are no upcoming races, no sessions are displayed
+- [x] The Next Race display shows the drivers names, and the cars they're assigned to
+- [x] If there are no upcoming races, no sessions are displayed
 - [ ] When the race session is ended, the Next Race display shows an additional message to proceed to the paddock
 
 ### Race Control Interface (Safety Official)
@@ -68,8 +68,8 @@
 
 ### General System Requirements
 
-- [ ] Communication between interfaces is in real-time. API calls must not be used to send data
-- [ ] Communication between interfaces utilizes messages sent via Socket.IO
+- [x] Communication between interfaces is in real-time. API calls must not be used to send data
+- [x] Communication between interfaces utilizes messages sent via Socket.IO
 - [ ] The Front Desk, Race Control and Lap-line Tracker require access codes to function correctly
 - [ ] The server waits 500ms to respond if an incorrect access key is entered in the interface
 - [ ] The interface re-prompts the user to enter a correct access key when an incorrect access key is inserted
@@ -79,7 +79,7 @@
 ### Extra Features
 
 - [ ] The system state is persisted (When the server is restarted, the system resumes with the exact same state)
-- [ ] The receptionist can assign drivers to specific cars
+- [x] The receptionist can assign drivers to specific cars
 ### Interface Routes
 
 | Interface        | Persona           | Route               |

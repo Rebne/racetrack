@@ -10,11 +10,9 @@
         // FIXME: DriverDiv does not scale properly with current setup
 
         //TODO: Next race display   has to be updated with changes made to the raceDiv that is next
-
-        let races = [];
-        let idCounter = 1;
-
         //Race methods: addDriver, removeCar, removeDriver, getDrivers
+
+        let idCounter = 1;
 
         function handleAddDriverErrors(code) {
             switch (code) {
@@ -201,7 +199,6 @@
 
         }
 
-
         function updateRaceDisplay(race) {
             const raceDiv = document.getElementById(`race-${race.id}`);
             removeDriversFromRaceDiv(raceDiv);
@@ -250,18 +247,19 @@
             return result;
         }
 
-
         document.addEventListener("DOMContentLoaded", () => {
 
             const socket = io();
 
             socket.on('start:race', () => {
-                const activeRace = races.shift();
-
+                //TODO: Maybe needs a check for empty array, but would be better to handle it elsewhere
+                const nextRace = window.races.shift();
+                removeRaceDiv(nextRace.id);
+                deleteRaceInDB(nextRace.id);
             });
 
             readAllRacesFromDB().then(function (result) {
-                races = result;
+                window.races = result;
                 let max = 0;
                 for (let i = 0; i < result.length; i++) {
                     race = result[i]
@@ -272,9 +270,6 @@
                 idCounter = max + 1;
                 
             });
-            
-            // Error on line 100 race is undefined. Should change all the call stack to use race.id instead of race object
-
             updateAddDiv();
 
 
