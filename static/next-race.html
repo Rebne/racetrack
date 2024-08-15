@@ -15,16 +15,9 @@
             }
         }
 
-        function generateDrivers() {
-
-        }
-
         async function getNextRace() {
 
             races = await getRacesInDB();
-
-            console.log(races);
-
             if (!races || races.length == 0) {return -1};
 
             nextRace = races[0].id;
@@ -36,50 +29,43 @@
 
         }
 
-        
+        function generateDrivers(raceID, drivers) {
+            const nextRaceDiv = document.getElementById('next-race');
+            nextRaceDiv.innerHTML = `
+                <h2>Next Race: ${raceID}</h2>
+                <ul>
+                    ${drivers.map(driver => `<li>${driver.name} - Car ${driver.car}</li>`).join('')}
+                </ul>
+            `;
+        }
+
+        async function initializeRaceData() {
+
+           const nextRace = await getNextRace();
+            let drivers;
+            if (nextRace !== -1) {
+                drivers = await getDriversInDB(nextRace);
+            }
+
+            const nextRaceDiv = document.getElementById('next-race');
+            if (Array.isArray(drivers) && drivers.length > 0) {
+                generateDrivers(nextRace, drivers);
+            } else {
+                const message = document.createElement('h2');
+                message.textContent = 'No races in queue'
+                nextRaceDiv.appendChild(message);
+            }
+        }
 
         socket.on('connect', () => {
             console.log('Connected to server');
         });
 
-
-        socket.on('update:nextRace', (race) => {
-            const nextRaceDiv = document.getElementById('next-race');
-            if (race) {
-                nextRaceDiv.innerHTML = `
-                    <h2>Next Race: ${race.id}</h2>
-                    <ul>
-                        ${race.drivers.map(driver => `<li>${driver.name} - Car ${driver.car}</li>`).join('')}
-                    </ul>
-                `;
-            } else {
-                nextRaceDiv.innerHTML = '<h2>No races in queue</h2>';
-            }
-        });
-
-        nextRace = getNextRace();
-
-        let drivers;
-
-        if (nextRace != -1) {
-            drivers = getDriversInDB(nextRace)
-        }
-
         document.addEventListener('DOMContentLoaded', () => {
-        
-        if (drivers) {
-            generateDrivers();
-        } else {
-
-            const noRaces = document.createElement('div');
-            noRaces.id = 'next-race';
-            const message = document.createElement('h2');
-            message.textContent = 'No races in queue'
-            noRaces.appendChild(message);
-            document.body.appendChild(noRaces);
-
-        }
-
+            const nextRaceDiv= document.createElement('div');
+            nextRaceDiv.id = 'next-race';
+            document.body.appendChild(nextRaceDiv);
+            initializeRaceData();
         });
     </script>
 </head>
