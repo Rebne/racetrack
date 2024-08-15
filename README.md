@@ -14,8 +14,8 @@
 - [x] The receptionist can add new race sessions
 - [x] The receptionist can add/edit/remove drivers from a race
 - [x] It is not possible to have two drivers with the same name
-- [ ] Race sessions disappear from the Front Desk interface once it is safe to start
-- [ ] The race drivers cannot be edited after the race is safe to start
+- [x] Race sessions disappear from the Front Desk interface once it is safe to start
+- [x] The race drivers cannot be edited after the race is safe to start
 
 ### Next Race Display (Race Driver)
 
