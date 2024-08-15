@@ -39,6 +39,11 @@
             `;
         }
 
+        function removePreviousRace() {
+            const nextRace = document.getElementById('next-race');
+            nextRace.innerHTML = '';
+        }
+
         async function initializeRaceData() {
 
            const nextRace = await getNextRace();
@@ -59,6 +64,11 @@
 
         socket.on('connect', () => {
             console.log('Connected to server');
+        });
+
+        socket.on('next:race', ()=> {
+            removePreviousRace();
+            initializeRaceData();
         });
 
         document.addEventListener('DOMContentLoaded', () => {

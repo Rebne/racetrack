@@ -252,6 +252,7 @@
                 const nextRace = window.races.shift();
                 removeRaceDiv(nextRace.id);
                 deleteRaceInDB(nextRace.id);
+                socket.emit('next:race');
             });
 
             readAllRacesFromDB().then(function (result) {
