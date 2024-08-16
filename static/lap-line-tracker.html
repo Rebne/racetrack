@@ -76,15 +76,15 @@
             buttonWrapper.innerHTML = '';
 
             // Generate buttons dynamically based on raceData
-            raceData.cars.forEach(car => {
+            raceData.drivers.forEach(driver => {
                 const button = document.createElement('button');
                 button.className = 'car-button';
-                button.setAttribute('data-car', car.name);
-                button.textContent = car.name;
+                button.setAttribute('data-car', driver.car);
+                button.textContent = driver.car;
 
                 button.addEventListener('click', () => {
-                    console.log(`Lap recorded for ${car.name}`);
-                    socket.emit('lap-recorded', { carName: car.name });
+                    console.log(`Lap recorded for ${driver.name}`);
+                    socket.emit('lap-recorded', { carName: driver.car});
                 });
 
                 buttonWrapper.appendChild(button);
@@ -92,7 +92,7 @@
         }
 
         // Handle race start event
-        socket.on('start:race', (raceData) => {
+        socket.on('race:data', (raceData) => {
             createButtons(raceData);
         });
 

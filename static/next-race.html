@@ -66,19 +66,17 @@
             console.log('Connected to server');
         });
 
-        socket.on('next:race', ()=> {
+        socket.on('start:race', ()=> {
             removePreviousRace();
             initializeRaceData();
         });
 
         document.addEventListener('DOMContentLoaded', () => {
-            const nextRaceDiv= document.createElement('div');
-            nextRaceDiv.id = 'next-race';
-            document.body.appendChild(nextRaceDiv);
             initializeRaceData();
         });
     </script>
 </head>
 <body>
+    <div id="next-race"></div>
 </body>
 </html>
