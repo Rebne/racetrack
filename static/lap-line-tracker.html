@@ -2,94 +2,36 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lap-Line Tracker</title>
-    <style>
-        body {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-            background-color: #f0f0f0;
-            font-family: Arial, sans-serif;
-        }
-
-        .container {
-            max-width: 90%;
-            text-align: center;
-        }
-
-        .button-wrapper {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            margin-top: 20px;
-        }
-
-        .car-button {
-            margin: 10px;
-            padding: 20px;
-            border: 2px solid #007bff;
-            border-radius: 10px;
-            background-color: #ffffff;
-            font-size: 24px;
-            cursor: pointer;
-            transition: background-color 0.3s, color 0.3s;
-        }
-
-        .car-button:hover {
-            background-color: #007bff;
-            color: #ffffff;
-        }
-
-        @media (max-width: 768px) {
-            .car-button {
-                padding: 15px;
-                font-size: 20px;
-            }
-        }
-    </style>
-</head>
-
-<body>
-<div class="container">
-    <h1>Lap-Line Tracker</h1>
-    <p>Tap on the button for each car to record a lap.</p>
-    <div class="button-wrapper" id="button-wrapper">
-        <!-- Buttons will be dynamically generated here -->
-    </div>
-</div>
-
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lap-Line Tracker</title>
 <script src="/socket.io/socket.io.js"></script>
 <script>
+    // Function to create buttons dynamically
+    function createButtons(raceData) {
+        const buttonWrapper = document.getElementById('button-wrapper');
+        buttonWrapper.style.display = 'flex'; // Show buttons on race start
+
+        // Clear previous buttons
+        buttonWrapper.innerHTML = '';
+
+        // Generate buttons dynamically based on raceData
+        raceData.drivers.forEach(driver => {
+            const button = document.createElement('button');
+            button.className = 'car-button';
+            button.setAttribute('data-car', driver.car);
+            button.textContent = driver.car;
+
+            button.addEventListener('click', () => {
+                console.log(`Lap recorded for ${driver.name}`);
+                socket.emit('lap-recorded', { carName: driver.car});
+            });
+
+            buttonWrapper.appendChild(button);
+        });
+    }
     document.addEventListener("DOMContentLoaded", () => {
         const socket = io();
-        const buttonWrapper = document.getElementById('button-wrapper');
-
-        // Function to create buttons dynamically
-        function createButtons(raceData) {
-            buttonWrapper.style.display = 'flex'; // Show buttons on race start
-
-            // Clear previous buttons
-            buttonWrapper.innerHTML = '';
-
-            // Generate buttons dynamically based on raceData
-            raceData.drivers.forEach(driver => {
-                const button = document.createElement('button');
-                button.className = 'car-button';
-                button.setAttribute('data-car', driver.car);
-                button.textContent = driver.car;
-
-                button.addEventListener('click', () => {
-                    console.log(`Lap recorded for ${driver.name}`);
-                    socket.emit('lap-recorded', { carName: driver.car});
-                });
-
-                buttonWrapper.appendChild(button);
-            });
-        }
 
         // Handle race start event
         socket.on('race:data', (raceData) => {
@@ -109,5 +51,60 @@
         });
     });
 </script>
+<style>
+    body {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        margin: 0;
+        background-color: #f0f0f0;
+        font-family: Arial, sans-serif;
+    }
+
+    .container {
+        max-width: 90%;
+        text-align: center;
+    }
+
+    .button-wrapper {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        margin-top: 20px;
+    }
+
+    .car-button {
+        margin: 10px;
+        padding: 20px;
+        border: 2px solid #007bff;
+        border-radius: 10px;
+        background-color: #ffffff;
+        font-size: 24px;
+        cursor: pointer;
+        transition: background-color 0.3s, color 0.3s;
+    }
+
+    .car-button:hover {
+        background-color: #007bff;
+        color: #ffffff;
+    }
+
+    @media (max-width: 768px) {
+        .car-button {
+            padding: 15px;
+            font-size: 20px;
+        }
+    }
+</style>
+</head>
+<body>
+<div class="container">
+    <h1>Lap-Line Tracker</h1>
+    <p>Tap on the button for each car to record a lap.</p>
+    <div class="button-wrapper" id="button-wrapper">
+        <!-- Buttons will be dynamically generated here -->
+    </div>
+</div>
 </body>
 </html>
