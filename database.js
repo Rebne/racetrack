@@ -18,7 +18,7 @@ db.run('CREATE TABLE IF NOT EXISTS drivers (id INTEGER PRIMARY KEY AUTOINCREMENT
 
 export default db;
 
-// implementing CRUD for tables
+// implementing CRUD for tables woop woop
 
 export function createRace(req, res) {
     const id = req.body.id;
