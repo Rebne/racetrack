@@ -10,27 +10,35 @@
     function createTutorial() {
         const tutorial = document.createElement('div');
         tutorial.className = 'tutorial';
+        tutorial.id = 'tutorial';
         tutorial.innerHTML = `
             <h1>Lap-Line Tracker</h1>
             <p>Tap on the button for each car to record a lap.</p>`; 
         document.body.appendChild(tutorial);
     }
 
-    function deleteTutorial() {
-        const tutorial = document.getElementsByClassName('tutorial');
+    function removeTutorial() {
+        const tutorial = document.getElementById('tutorial');
         tutorial.remove();
+    }
+    function removeButtons() {
+        const buttons = document.getElementById('active');
+        buttons.remove();
     }
 
     // Function to create buttons dynamically
     function createButtons(raceData) {
         const buttonWrapper = document.createElement('div');
         buttonWrapper.className = 'active';
+        buttonWrapper.id = 'active';
         document.body.appendChild(buttonWrapper);
 
         // Generate buttons dynamically based on raceData
+
         raceData.drivers.forEach(driver => {
             const button = document.createElement('button');
             button.className = 'car-button';
+
             button.setAttribute('data-car', driver.car);
             button.textContent = driver.car;
 
@@ -41,6 +49,7 @@
 
             buttonWrapper.appendChild(button);
         });
+
     }
 
     document.addEventListener("DOMContentLoaded", () => {
@@ -50,7 +59,14 @@
         
         // Handle race start event
         socket.on('race:data', (raceData) => {
+            removeTutorial();
             createButtons(raceData);
+        });
+
+        //handle race end event
+        socket.on('finish:race', ()=> {
+            removeButtons();
+            createTutorial();
         });
 
         // Request current race data when connected, in case the race has already started
@@ -70,9 +86,14 @@
     body {
         display: flex;
         height: 100vh;
+        width: 100vw;
         margin: 0;
         background-color: #f0f0f0;
         font-family: Arial, sans-serif;
+    }
+
+    button {
+        width: 25%;
     }
 
     .active {
@@ -94,16 +115,12 @@
         text-align: center;
     }
 
-    .button-wrapper {
-        display: flex;
-        flex-wrap: wrap;
-        justify-content: center;
-        margin-top: 20px;
-    }
-
     .car-button {
-        margin: 10px;
-        padding: 20px;
+        display: inline-block;
+        min-width: 25%;
+        max-height: 50%;
+        margin: 0px;
+        padding: 0px;
         border: 2px solid #007bff;
         border-radius: 10px;
         background-color: #ffffff;
@@ -117,12 +134,18 @@
         color: #ffffff;
     }
 
-    @media (max-width: 768px) {
-        .car-button {
-            padding: 15px;
-            font-size: 20px;
+    @media screen and (orientation: portrait) {
+        button {
+            width: 50%;
         }
     }
+
+    @media screen and (orientation: landscape) {
+        button {
+            width: 25%;
+        }
+    }
+
 </style>
 </head>
 <body>
