@@ -7,6 +7,20 @@
 <title>Lap-Line Tracker</title>
 <script src="/socket.io/socket.io.js"></script>
 <script>
+    function createTutorial() {
+        const tutorial = document.createElement('div');
+        tutorial.className = 'tutorial';
+        tutorial.innerHTML = `
+            <h1>Lap-Line Tracker</h1>
+            <p>Tap on the button for each car to record a lap.</p>`; 
+        document.body.appendChild(tutorial);
+    }
+
+    function deleteTutorial() {
+        const tutorial = document.getElementsByClassName('tutorial');
+        tutorial.remove();
+    }
+
     // Function to create buttons dynamically
     function createButtons(raceData) {
         const buttonWrapper = document.getElementById('button-wrapper');
@@ -30,9 +44,12 @@
             buttonWrapper.appendChild(button);
         });
     }
+
     document.addEventListener("DOMContentLoaded", () => {
         const socket = io();
 
+        createTutorial();
+        
         // Handle race start event
         socket.on('race:data', (raceData) => {
             createButtons(raceData);
@@ -53,15 +70,25 @@
 </script>
 <style>
     body {
+        display: flex;
         height: 100vh;
         margin: 0;
         background-color: #f0f0f0;
         font-family: Arial, sans-serif;
     }
 
-    .tutorial {    
-        flex-direction: column;
+    .active {
         display: flex;
+        width: 100%;
+        height: 100%;
+        text-align: center;
+        flex-direction: row;
+        flex-wrap: wrap;
+
+    }
+    .tutorial {    
+        display: flex;
+        flex-direction: column;
         justify-content: center;
         align-items: center;
         width: 100%;
@@ -101,12 +128,5 @@
 </style>
 </head>
 <body>
-<div class="container">
-    <h1>Lap-Line Tracker</h1>
-    <p>Tap on the button for each car to record a lap.</p>
-    <div class="button-wrapper" id="button-wrapper">
-        <!-- Buttons will be dynamically generated here -->
-    </div>
-</div>
 </body>
 </html>
