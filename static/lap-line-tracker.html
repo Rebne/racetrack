@@ -23,11 +23,9 @@
 
     // Function to create buttons dynamically
     function createButtons(raceData) {
-        const buttonWrapper = document.getElementById('button-wrapper');
-        buttonWrapper.style.display = 'flex'; // Show buttons on race start
-
-        // Clear previous buttons
-        buttonWrapper.innerHTML = '';
+        const buttonWrapper = document.createElement('div');
+        buttonWrapper.className = 'active';
+        document.body.appendChild(buttonWrapper);
 
         // Generate buttons dynamically based on raceData
         raceData.drivers.forEach(driver => {
