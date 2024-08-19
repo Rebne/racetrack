@@ -20,7 +20,7 @@
 ### Next Race Display (Race Driver)
 
 - [x] The upcoming race session is displayed on the Next Race display
-- [ ] The Next Race display switches to the subsequent race, once the current race is safe to start
+- [x] The Next Race display switches to the subsequent race, once the current race is safe to start
 - [x] The Next Race display shows the drivers names, and the cars they're assigned to
 - [x] If there are no upcoming races, no sessions are displayed
 - [ ] When the race session is ended, the Next Race display shows an additional message to proceed to the paddock
@@ -45,10 +45,11 @@
 
 ### Lap-Line Tracker Interface (Lap-line Observer)
 
-- [ ] When the race session starts, the Lap-Line Observer sees a button for each car
-- [ ] The lap button for each car has a large tappable area
-- [ ] The Lap-line Tracker is designed for a tablet, featuring large tappable buttons for each car
-- [ ] It should work in Landscape or Portrait
+- [x] When the race session starts, the Lap-Line Observer sees a button for each car
+- [x] The lap button for each car has a large tappable area
+- [x] The Lap-line Tracker is designed for a tablet, featuring large tappable buttons for each car
+- [x] It should work in Landscape or Portrait
+- [x] The buttons disappear or are visibly disabled between races
 
 ### Leaderboard (Guest)
 
@@ -73,8 +74,7 @@
 - [ ] The Front Desk, Race Control and Lap-line Tracker require access codes to function correctly
 - [ ] The server waits 500ms to respond if an incorrect access key is entered in the interface
 - [ ] The interface re-prompts the user to enter a correct access key when an incorrect access key is inserted
-- [ ] The buttons disappear or are visibly disabled between races
-- [ ] Communication between the interfaces certainly does not use a polling convention
+- [x] Communication between the interfaces certainly does not use a polling convention
 
 ### Extra Features
 

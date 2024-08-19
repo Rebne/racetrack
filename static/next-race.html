@@ -65,6 +65,14 @@
         socket.on('connect', () => {
             console.log('Connected to server');
         });
+        
+        socket.on('finish:race', ()=>{
+            const message = document.createElement('div');
+            message.id = 'message';
+            message.innerHTML = `
+            <p>Please proceed to the paddock</p>`;
+            document.body.appendChild(message);
+        });
 
         socket.on('start:race', ()=> {
             removePreviousRace();
