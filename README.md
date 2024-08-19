@@ -23,7 +23,7 @@
 - [x] The Next Race display switches to the subsequent race, once the current race is safe to start
 - [x] The Next Race display shows the drivers names, and the cars they're assigned to
 - [x] If there are no upcoming races, no sessions are displayed
-- [ ] When the race session is ended, the Next Race display shows an additional message to proceed to the paddock
+- [x] When the race session is ended, the Next Race display shows an additional message to proceed to the paddock
 
 ### Race Control Interface (Safety Official)
 
