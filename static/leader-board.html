@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+
 <html>
 <head>
     <meta charset="UTF-8">
@@ -6,35 +7,74 @@
     <script src="/socket.io/socket.io.js"></script>
     <script>
 
+    //Might want to change this later
+    let raceStartTime;
     const lapTimes = new Map();
     let lastLap; 
 
-    function initializeDrivers(drivers) {
+    function removeDrivers() {
+        const drivers = document.querySelectorAll('.driver');
+        drivers.forEach((driver) => driver.remove());
+    }
+
+    function reloadDrivers(){
+        removeDrivers();
+
+    }
+
+    function initializeDrivers(drivers, startTime) {
+        // Initialize last lap to start time for comparison
+        // +1 is added to length to be able to index with car numbers without changing them
+        lastLap = new Array(drivers.length + 1).fill(startTime);
+
+        const container = document.getElementById('container');
         drivers.forEach(driver => {
             const driverDiv = document.createElement('div');
             driverDiv.id = driver.car;
-            driverDiv.className = 'driver-lap';
+            driverDiv.className = 'driver';
             driverDiv.textContent = `Best lap: 00:00 Name: ${driver.name} Car: ${driver.car}`;
             lapTimes.set(driver.name, 0);
+            container.appendChild(driverDiv);
         });
     }
+
     document.addEventListener("DOMContentLoaded", () => {
         const socket = io();
 
         socket.on('race:data', (raceData) => {
+            raceStartTime = Date.now();
             console.log(raceData);
+            initializeDrivers(raceData.drivers, raceStartTime);
         });
+
+        socket.on('lap-recored', (car) => {
+            const now = Date.now();
+            const prev = lastLap[car];
+            lastLap[car] = now;
+            lapTimes.set(car, now - prev);
+
+            reloadDrivers();
+        });
+
         socket.on('finish:race', ()=> {
         });
+
         socket.on('connect', () => {
             console.log('Connected to server');
         });
+
     });
 
     </script>
 </head>
 
 <style>
+    body {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+    }
 </style>
 
 <body>
