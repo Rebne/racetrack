@@ -55,10 +55,10 @@
 
 - [ ] The leaderboard shows the remaining time on the timer
 - [ ] The leaderboard shows the flag color for the current race mode
-- [ ] When the lap button is pressed for a car, the leader board is updated
-- [ ] The leaderboard is ordered by fastest lap times
-- [ ] The leaderboard shows the drivers name and car number
-- [ ] The leaderboard shows the fastest lap time for each car
+- [x] When the lap button is pressed for a car, the leader board is updated
+- [x] The leaderboard is ordered by fastest lap times
+- [x] The leaderboard shows the drivers name and car number
+- [x] The leaderboard shows the fastest lap time for each car
 - [ ] The leaderboard shows the current lap for each car
 - [ ] The first lap starts when the car crosses the leader board for the first time
 

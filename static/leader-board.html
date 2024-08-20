@@ -10,16 +10,54 @@
     //Might want to change this later
     let raceStartTime;
     const lapTimes = new Map();
-    let lastLap; 
+    const carNameMap = new Map();
+    let lastLap;
+
+    function carsSortedByLapTime(map) {
+        return Array.from(map.entries())
+        .sort((a, b) => a[1] - b[1])
+        .map(entry => entry[0]);
+    }
 
     function removeDrivers() {
         const drivers = document.querySelectorAll('.driver');
         drivers.forEach((driver) => driver.remove());
     }
 
+    function lapTimeAsString(ms) {
+        let result = '';
+        const roundedSeconds = Math.round(ms / 1000);
+        const minutes = Math.floor(roundedSeconds / 60);
+        const seconds = roundedSeconds % 60;
+        
+        if (minutes >= 10) {
+            result += minutes.toString();
+        } else {
+            result += '0' + minutes.toString();
+        }
+        result += ':';
+        if (seconds >= 10) {
+            result += seconds.toString();
+        } else {
+            result += '0' + seconds.toString();
+        }
+        return result;
+    }
+
     function reloadDrivers(){
         removeDrivers();
+        const carsInOrder = carsSortedByLapTime(lapTimes);
+        const container = document.getElementById('container');
 
+        carsInOrder.forEach(car => {
+            const name = carNameMap.get(car);
+            const driverDiv = document.createElement('div');
+            driverDiv.id = car;
+            driverDiv.className = 'driver';
+            const lapTime = lapTimes.get(car);
+            driverDiv.textContent = `Best lap: ${lapTimeAsString(lapTime)} Name: ${name} Car: ${car}`;
+            container.appendChild(driverDiv);
+        });
     }
 
     function initializeDrivers(drivers, startTime) {
@@ -33,7 +71,8 @@
             driverDiv.id = driver.car;
             driverDiv.className = 'driver';
             driverDiv.textContent = `Best lap: 00:00 Name: ${driver.name} Car: ${driver.car}`;
-            lapTimes.set(driver.name, 0);
+            lapTimes.set(driver.car, 0);
+            carNameMap.set(driver.car, driver.name);
             container.appendChild(driverDiv);
         });
     }
@@ -47,7 +86,8 @@
             initializeDrivers(raceData.drivers, raceStartTime);
         });
 
-        socket.on('lap-recored', (car) => {
+        socket.on('lap-recorded', (car) => {
+            console.log(car);
             const now = Date.now();
             const prev = lastLap[car];
             lastLap[car] = now;
@@ -57,6 +97,7 @@
         });
 
         socket.on('finish:race', ()=> {
+            removeDrivers();
         });
 
         socket.on('connect', () => {

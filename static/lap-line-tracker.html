@@ -7,6 +7,9 @@
 <title>Lap-Line Tracker</title>
 <script src="/socket.io/socket.io.js"></script>
 <script>
+
+    const socket = io();
+
     function createTutorial() {
         const tutorial = document.createElement('div');
         tutorial.className = 'tutorial';
@@ -44,7 +47,7 @@
 
             button.addEventListener('click', () => {
                 console.log(`Lap recorded for ${driver.name}`);
-                socket.emit('lap-recorded', { carName: driver.car});
+                socket.emit('lap-recorded', driver.car);
             });
 
             buttonWrapper.appendChild(button);
@@ -53,7 +56,6 @@
     }
 
     document.addEventListener("DOMContentLoaded", () => {
-        const socket = io();
 
         createTutorial();
         
