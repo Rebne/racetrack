@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Leaderboard</title>
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+
+    const lapTimes = new Map();
+    let lastLap; 
+
+    function initializeDrivers(drivers) {
+        drivers.forEach(driver => {
+            const driverDiv = document.createElement('div');
+            driverDiv.id = driver.car;
+            driverDiv.className = 'driver-lap';
+            driverDiv.textContent = `Best lap: 00:00 Name: ${driver.name} Car: ${driver.car}`;
+            lapTimes.set(driver.name, 0);
+        });
+    }
+    document.addEventListener("DOMContentLoaded", () => {
+        const socket = io();
+
+        socket.on('race:data', (raceData) => {
+            console.log(raceData);
+        });
+        socket.on('finish:race', ()=> {
+        });
+        socket.on('connect', () => {
+            console.log('Connected to server');
+        });
+    });
+
+    </script>
+</head>
+
+<style>
+</style>
+
+<body>
+    <div id="container">
+    </div>
+</body>
+</html>

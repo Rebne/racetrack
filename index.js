@@ -9,7 +9,7 @@ const app = express();
 const server = createServer(app);
 const io = new Server(server);
 
-const port = 3030;
+const port = 3000;
 
 let isDevMode = false;
 
