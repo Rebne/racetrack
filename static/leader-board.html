@@ -7,7 +7,6 @@
     <script src="/socket.io/socket.io.js"></script>
     <script>
 
-    //Might want to change this later
     let raceStartTime;
     const bestLapTimes = new Map();
     const carNameMap = new Map();
@@ -111,7 +110,7 @@
         });
 
         socket.on('lap-recorded', (car) => {
-            updateLapTime(car);
+            updateLapTime(car)
             currentLapCount[car]++;
             reloadDrivers();
         });
