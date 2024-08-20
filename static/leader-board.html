@@ -11,7 +11,8 @@
     let raceStartTime;
     const bestLapTimes = new Map();
     const carNameMap = new Map();
-    let lastLap;
+    let currentLapCount;
+    let lastLapTimestamp;
 
     function min(a, b) {
         if (a < b) {return a;}
@@ -66,7 +67,9 @@
             driverDiv.id = car;
             driverDiv.className = 'driver';
             const lapTime = bestLapTimes.get(car);
-            driverDiv.textContent = `Best lap: ${lapTimeAsString(lapTime)} Name: ${name} Car: ${car}`;
+            const numLap = currentLapCount[car].toString();
+            driverDiv.textContent = `Best lap: ${lapTimeAsString(lapTime)} Name: ${name} Car: ${car} Current lap: ${numLap}`;
+
             container.appendChild(driverDiv);
         });
     }
@@ -74,18 +77,28 @@
     function initializeDrivers(drivers, startTime) {
         // Initialize last lap to start time for comparison
         // +1 is added to length to be able to index with car numbers without changing them
-        lastLap = new Array(drivers.length + 1).fill(startTime);
+        lastLapTimestamp = new Array(drivers.length + 1).fill(startTime);
+        currentLapCount = new Array(drivers.length + 1).fill(1); 
 
         const container = document.getElementById('container');
         drivers.forEach(driver => {
             const driverDiv = document.createElement('div');
             driverDiv.id = driver.car;
             driverDiv.className = 'driver';
-            driverDiv.textContent = `Best lap: 00:00.0 Name: ${driver.name} Car: ${driver.car}`;
+            driverDiv.textContent = `Best lap: 00:00.0 Name: ${driver.name} Car: ${driver.car} Current lap: 1`;
             bestLapTimes.set(driver.car, Infinity);
             carNameMap.set(driver.car, driver.name);
             container.appendChild(driverDiv);
         });
+    }
+
+    function updateLapTime(car) {
+        const now = Date.now();
+        const prev = lastLapTimestamp[car];
+        lastLapTimestamp[car] = now;
+        const current = now - prev;
+        const prevBest = bestLapTimes.get(car);
+        bestLapTimes.set(car, min(current, prevBest));
     }
 
     document.addEventListener("DOMContentLoaded", () => {
@@ -98,14 +111,8 @@
         });
 
         socket.on('lap-recorded', (car) => {
-            console.log(car);
-            const now = Date.now();
-            const prev = lastLap[car];
-            lastLap[car] = now;
-            const current = now - prev;
-            const prevBest = bestLapTimes.get(car);
-            bestLapTimes.set(car, min(current, prevBest));
-
+            updateLapTime(car);
+            currentLapCount[car]++;
             reloadDrivers();
         });
 
