@@ -29,18 +29,24 @@
         const roundedSeconds = Math.round(ms / 1000);
         const minutes = Math.floor(roundedSeconds / 60);
         const seconds = roundedSeconds % 60;
+        const millis = Math.floor((ms % 1000) / 100);
         
+        //min
         if (minutes >= 10) {
             result += minutes.toString();
         } else {
             result += '0' + minutes.toString();
         }
         result += ':';
+        //sec
         if (seconds >= 10) {
             result += seconds.toString();
         } else {
             result += '0' + seconds.toString();
         }
+        //ms
+        result += '.' + millis.toString();
+
         return result;
     }
 
@@ -70,7 +76,7 @@
             const driverDiv = document.createElement('div');
             driverDiv.id = driver.car;
             driverDiv.className = 'driver';
-            driverDiv.textContent = `Best lap: 00:00 Name: ${driver.name} Car: ${driver.car}`;
+            driverDiv.textContent = `Best lap: 00:00.0 Name: ${driver.name} Car: ${driver.car}`;
             lapTimes.set(driver.car, 0);
             carNameMap.set(driver.car, driver.name);
             container.appendChild(driverDiv);
