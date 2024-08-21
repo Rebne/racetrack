@@ -30,6 +30,12 @@
         drivers.forEach((driver) => driver.remove());
     }
 
+    function removeAll() {
+        removeDrivers();
+        const flag = document.getElementById('flag');
+        flag.classList.add('hidden');
+    }
+
     function lapTimeAsString(ms) {
         if (ms === Infinity) {return '00:00.0';}
         let result = '';
@@ -130,7 +136,7 @@
         });
 
         socket.on('finish:race', ()=> {
-            removeDrivers();
+            removeAll();
         });
 
         socket.on('connect', () => {
