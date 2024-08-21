@@ -54,7 +54,7 @@
 ### Leaderboard (Guest)
 
 - [ ] The leaderboard shows the remaining time on the timer
-- [ ] The leaderboard shows the flag color for the current race mode
+- [x] The leaderboard shows the flag color for the current race mode
 - [x] When the lap button is pressed for a car, the leader board is updated
 - [x] The leaderboard is ordered by fastest lap times
 - [x] The leaderboard shows the drivers name and car number

@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <title>Leaderboard</title>
     <script src="/socket.io/socket.io.js"></script>
+    <script src="../flag.js"></script>
     <script>
 
     let raceStartTime;
@@ -105,8 +106,21 @@
 
         socket.on('race:data', (raceData) => {
             raceStartTime = Date.now();
-            console.log(raceData);
+            const flag = document.getElementById('flag');
+            flag.classList.remove('hidden');
             initializeDrivers(raceData.drivers, raceStartTime);
+        });
+
+        socket.on('flag:swap', (message) => {
+            const flag = document.getElementById('flag');
+            flag.classList.remove('hidden');
+            const color = flag_colors.get(message);
+            if (message == 'finished') {
+                createCheckeredFlag(flag);
+            } else {
+                removeCheckeredFlag();
+                flag.style.backgroundColor = flag_colors.get(message);
+            }
         });
 
         socket.on('lap-recorded', (car) => {
@@ -134,11 +148,29 @@
         justify-content: center;
         align-items: center;
         height: 100vh;
+        margin: 0;
+    }
+
+    #container {
+        width: 100%;
+    }
+
+    .flag {
+        width: 200px; 
+        height: 150px; 
+        display: flex;
+        flex-wrap: wrap;
+        background-color: green;
+    }
+
+    .hidden {
+        display: none;
     }
 </style>
 
 <body>
     <div id="container">
+        <div class="flag hidden" id="flag"></div>
     </div>
 </body>
 </html>
