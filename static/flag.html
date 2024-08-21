@@ -3,39 +3,16 @@
   <head>
     <title>Race flags</title>
     <script src="/socket.io/socket.io.js"></script>
+    <script src="../flag.js"></script>
     <script>
         document.addEventListener("DOMContentLoaded", () => {
             const socket = io();
-            const flag = document.body;
-            
-            function createCheckeredFlag() {
-                for (let row = 0; row < 5; row++) {
-                    for (let col = 0; col < 10; col++) {
-                    const box = document.createElement('div');
-                    box.className = 'box';
-                    box.style.width = '10%';
-                    box.style.height = '20%';
-                    box.style.backgroundColor = ((row + col) % 2 == 0) ? 'white' : 'black';
-                    flag.appendChild(box);
-                    }
-                }
-            }
-
-            function removeCheckeredFlag () {
-                const elementsToRemove = document.querySelectorAll('.box');
-                if (elementsToRemove.length > 0) {
-                    elementsToRemove.forEach((box) => {
-                        box.remove();
-                    });
-                }
-            }
-    
-            const flag_colors = new Map([['safe', 'green'],['danger', 'red'], ['hazard', 'yellow'], ['none', 'white'],['finished', 'checkered']]);
+            flag = document.body;
             
             socket.on('flag:swap', (message) => {
                 const color = flag_colors.get(message);
                 if (message == 'finished') {
-                    createCheckeredFlag();
+                    createCheckeredFlag(flag);
                 } else {
                     removeCheckeredFlag();
                     flag.style.backgroundColor = flag_colors.get(message);

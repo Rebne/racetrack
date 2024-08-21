@@ -29,7 +29,7 @@
 
 - [ ] If there is no upcoming race after the last session is ended, the Safety Official sees no upcoming races message
 - [x] The safety official has one active button, which starts the race when pressed
-- [ ] When the race is started, the following happens:
+- [x] When the race is started, the following happens:
   - The race mode is changed to "Safe"
   - The leader board changes to the current race
   - The Next Race screen switches to the subsequent race session
