@@ -6,13 +6,18 @@
     <title>Leaderboard</title>
     <script src="/socket.io/socket.io.js"></script>
     <script src="../flag.js"></script>
+    <script src="../countdown.js"></script>
     <script>
-
+    
+    //GLOBAL variables
     let raceStartTime;
     const bestLapTimes = new Map();
     const carNameMap = new Map();
     let currentLapCount;
     let lastLapTimestamp;
+    let countdownTime = 10 * 60;
+    //this is an object because int/number cannot be passed to a function as a reference
+    let timeRemaining = {seconds: countdownTime};
 
     function min(a, b) {
         if (a < b) {return a;}
@@ -34,6 +39,8 @@
         removeDrivers();
         const flag = document.getElementById('flag');
         flag.classList.add('hidden');
+        const countdown = document.getElementById('countdown');
+        countdown.classList.add('hidden');
     }
 
     function lapTimeAsString(ms) {
@@ -110,11 +117,27 @@
     document.addEventListener("DOMContentLoaded", () => {
         const socket = io();
 
+        socket.on('devMode', (data) => {
+            if (data.isDevMode) {
+                countdownTime = 1 * 60;
+                timeRemaining.seconds = countdownTime;
+            };
+            //swapping to 1:00 for idle value
+            const timer = document.getElementById('countdown');
+            timer.textContent = '1:00';
+        });
+        
         socket.on('race:data', (raceData) => {
             raceStartTime = Date.now();
             const flag = document.getElementById('flag');
             flag.classList.remove('hidden');
             initializeDrivers(raceData.drivers, raceStartTime);
+        });
+
+        socket.on('start:race', () => {
+            const countdown = document.getElementById('countdown');
+            countdown.classList.remove('hidden');
+            updateCountdown(timeRemaining);
         });
 
         socket.on('flag:swap', (message) => {
@@ -136,6 +159,8 @@
         });
 
         socket.on('finish:race', ()=> {
+            //resetting timer
+            timeRemaining.seconds = countdownTime;
             removeAll();
         });
 
@@ -161,7 +186,7 @@
         width: 100%;
     }
 
-    .flag {
+    #flag {
         width: 200px; 
         height: 150px; 
         display: flex;
@@ -176,7 +201,8 @@
 
 <body>
     <div id="container">
-        <div class="flag hidden" id="flag"></div>
+        <div class="hidden" id="countdown">10:00</div>
+        <div class="hidden" id="flag"></div>
     </div>
 </body>
 </html>

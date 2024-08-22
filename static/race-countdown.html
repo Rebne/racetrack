@@ -25,15 +25,19 @@
 <script>
     const socket = io();
     //converted timeRemaining to object because cant send integer/number as reference to a function
-    let timeRemaining = {seconds: 60 * 10};
+    let countdownTime = 10 * 60;
+    let timeRemaining = {seconds: countdownTime};
 
     socket.on('devMode', (data) => {
-        if (data.isDevMode) {timeRemaining = 1 * 60}
+        if (data.isDevMode) {
+            countdownTime = 1 * 60;
+            timeRemaining.seconds = countdownTime;
+        }
         //swapping to 1:00 for idle value
         const timer = document.getElementById('countdown');
         timer.textContent = '1:00';
         document.title = 'Race countdown (Dev Mode)';
-    })
+    });
 
     socket.on('connect', () => {
         console.log('Connected to server');
@@ -41,6 +45,7 @@
 
     socket.on('start:race', () => {
         console.log('Race started');
+        timeRemaining.seconds = countdownTime;
         updateCountdown(timeRemaining); // Start the countdown
     });
 </script>
