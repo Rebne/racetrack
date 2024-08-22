@@ -51,11 +51,7 @@ app.get('/front-desk', (_, res) => {
 });
 
 app.get('/race-countdown', (_, res) => {
-  const countdownFilePath = isDevMode
-      ? join(__dirname, 'static', 'race-countdown-dev.html')
-      : join(__dirname, 'static', 'race-countdown.html');
-
-  res.sendFile(countdownFilePath);
+  res.sendFile(join(__dirname,'static','race-countdown.html'));
 });
 
 app.get('/lap-line-tracker', (_, res) => {
@@ -81,11 +77,7 @@ io.on('connection', (socket) => {
     io.emit(eventName, data);
   });
 
-  // for debugging (console logging all emits)
-  socket.onAny((eventName, ...args) => {
-    console.log(eventName);
-    console.log(args);
-  })
+  socket.emit('devMode', {isDevMode: isDevMode});
 
   // Handle 'create:race' event
   socket.on('create:race', (data) => {
