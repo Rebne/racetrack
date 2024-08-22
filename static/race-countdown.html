@@ -21,31 +21,14 @@
 <body>
 <div id="countdown">10:00</div>
 <script src="/socket.io/socket.io.js"></script>
+<script src="../countdown.js"></script>
 <script>
     const socket = io();
-    let countdownTime = 10 * 60;
-    let timeRemaining = countdownTime;
-
-    function formatTime(seconds) {
-        const minutes = Math.floor(seconds / 60);
-        const secs = seconds % 60;
-        return `${minutes}:${secs < 10 ? '0' : ''}${secs}`;
-    }
-
-    function updateCountdown() {
-        const countdownElement = document.getElementById('countdown');
-        countdownElement.textContent = formatTime(timeRemaining);
-
-        if (timeRemaining > 0) {
-            timeRemaining--;
-            setTimeout(updateCountdown, 1000);
-        } else {
-            countdownElement.textContent = "Race Over";
-        }
-    }
+    //converted timeRemaining to object because cant send integer/number as reference to a function
+    let timeRemaining = {seconds: 60 * 10};
 
     socket.on('devMode', (data) => {
-        if (data.isDevMode) {countdownTime = 1 * 60}
+        if (data.isDevMode) {timeRemaining = 1 * 60}
         //swapping to 1:00 for idle value
         const timer = document.getElementById('countdown');
         timer.textContent = '1:00';
@@ -58,8 +41,7 @@
 
     socket.on('start:race', () => {
         console.log('Race started');
-        timeRemaining = countdownTime; // Reset the countdown
-        updateCountdown(); // Start the countdown
+        updateCountdown(timeRemaining); // Start the countdown
     });
 </script>
 </body>
