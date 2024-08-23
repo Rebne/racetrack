@@ -38,7 +38,7 @@
     function removeAll() {
         removeDrivers();
         const flag = document.getElementById('flag');
-        flag.classList.add('hidden');
+        flag.remove();
         const countdown = document.getElementById('countdown');
         countdown.classList.add('hidden');
     }
@@ -105,6 +105,12 @@
         });
     }
 
+    function renderFlag() {
+        const flag = document.createElement('div');
+        flag.id = 'flag';
+        document.getElementById('container').appendChild(flag);
+    }
+
     function updateLapTime(car) {
         const now = Date.now();
         const prev = lastLapTimestamp[car];
@@ -129,8 +135,6 @@
         
         socket.on('race:data', (raceData) => {
             raceStartTime = Date.now();
-            const flag = document.getElementById('flag');
-            flag.classList.remove('hidden');
             initializeDrivers(raceData.drivers, raceStartTime);
         });
 
@@ -138,11 +142,11 @@
             const countdown = document.getElementById('countdown');
             countdown.classList.remove('hidden');
             updateCountdown(timeRemaining);
+            renderFlag();
         });
 
         socket.on('flag:swap', (message) => {
             const flag = document.getElementById('flag');
-            flag.classList.remove('hidden');
             const color = flag_colors.get(message);
             if (message == 'finished') {
                 createCheckeredFlag(flag);
@@ -202,7 +206,6 @@
 <body>
     <div id="container">
         <div class="hidden" id="countdown">10:00</div>
-        <div class="hidden" id="flag"></div>
     </div>
 </body>
 </html>
