@@ -75,27 +75,25 @@
     }
 
     function populateDriverData() {
-        // Initialize last lap to start time for comparison
-        // +1 is added to length to be able to index with car numbers without changing them
-        lastLapTimestamp = new Array(drivers.length + 1).fill(startTime);
-        currentLapCount = new Array(drivers.length + 1).fill(1); 
+        const startTime = localStorage.startTime;
+        lastLapTimestamp = new Array(9).fill(startTime);
+        currentLapCount = new Array(9).fill(1);
         for (let i = 0; i < localStorage.length; i++) {
             const key = localStorage.key(i);
             if (!isStringNumber(key)) {
                 continue
             }
-            const value = JSON.parse(localStorage.getItem(key));
-            
-
+            const index = parseInt(key);
+            const carData = JSON.parse(localStorage.getItem(key));
+            lastLapTimestamp[index] = carData.timeStamp;
+            currentLapCount[index] = carData.lapCount;
+            carNameMap.set(index, carData.name);
+            bestLapTimes.set(index, carData.bestLap);
         } 
-
     }
 
     function reloadDrivers(){
         removeDrivers();
-        if (localStorage.length > 0) {
-            populateDriverData();
-        }
         const carsInOrder = carsSortedByLapTime(bestLapTimes);
         const container = document.getElementById('container');
 
@@ -145,6 +143,16 @@
         bestLapTimes.set(car, min(current, prevBest));
     }
 
+    function storeDriverData(car) {
+        const obj = {
+            timeStamp: lastLapTimestamp[car],
+            lapCount: currentLapCount[car],
+            name: carNameMap.get(car),
+            bestLap: bestLapTimes.get(car)
+        };
+        localStorage.setItem(car.toString(), JSON.stringify(obj));
+    }
+
     document.addEventListener("DOMContentLoaded", () => {
         const socket = io();
 
@@ -186,6 +194,7 @@
             updateLapTime(car)
             currentLapCount[car]++;
             reloadDrivers();
+            storeDriverData(car);
         });
 
         socket.on('finish:race', ()=> {
@@ -198,7 +207,8 @@
             console.log('Connected to server');
             //Checking if there is an ongoing race
             if (localStorage.length > 0) {
-                
+                populateDriverData();
+                reloadDrivers(); 
             }
         });
 

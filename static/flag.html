@@ -8,6 +8,8 @@
         document.addEventListener("DOMContentLoaded", () => {
             const socket = io();
             flag = document.body;
+
+            socket.on('start:race', () => {flag.style.backgroundColor = 'green';});
             
             socket.on('flag:swap', (message) => {
                 const color = flag_colors.get(message);
