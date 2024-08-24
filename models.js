@@ -1,10 +1,3 @@
-class JsonData {
-    constructor() {
-        this.raceActive = false;
-        this.startTime = 0;
-    }
-}
-
 class Driver {
     constructor(name, car) {
         this.name = name;
