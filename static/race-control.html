@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Race Control</title>
     <script src="/socket.io/socket.io.js"></script>
+    <script src="../models.js"></script>
+    <script src="../fetchdata.js"></script>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -88,13 +90,13 @@
     </div>
 </div>
 <script>
+
     document.addEventListener("DOMContentLoaded", () => {
         const socket = io();
         const startButton = document.querySelector('.start-button');
         const controlButtons = document.querySelector('.control-buttons');
         const endRaceSessionButton = document.querySelector('.end-race-session-button');
         const buttons = controlButtons.querySelectorAll('.flag-button');
-
         startButton.addEventListener('click', () => {
             startNewRace();
         });
@@ -108,10 +110,8 @@
                         b.classList.remove('active');
                     }
                 });
-
                 const message = button.dataset.flag;
                 socket.emit('flag:swap', message);
-
                 if (message === 'finished') {
                     controlButtons.style.display = 'none';
                     endRaceSessionButton.style.display = 'block';
@@ -137,8 +137,10 @@
             safeButton.classList.add('active');
             socket.emit('flag:swap', 'safe');
             socket.emit('start:race'); // Emit start race signal
+            writeStateInJson(new JsonData(true, Date.now()));
         }
     });
+
 </script>
 </body>
 </html>

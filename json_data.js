@@ -19,7 +19,7 @@ export function readJSON(_, res) {
 
 export function writeJSON(req, res) {
     try {
-        const jsonString = JSON.stringify(req.body);
+        const jsonString = JSON.stringify(req.body, null, 2);
         writeFileSync(filePath, jsonString);
     } catch(error) {
         res.status(500).json({error: error});

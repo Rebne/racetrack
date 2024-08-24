@@ -126,7 +126,7 @@ async function deleteRaceInDB(race_id) {
     }
 }
 
-async function readStateFromJson() {
+async function readStateInJson() {
     try {
         const response = await fetch('/api/json_data', {
             method: 'GET'
@@ -139,5 +139,23 @@ async function readStateFromJson() {
         return data;
     } catch (error) {
         console.error('Fetch get json error', error);
+    }
+}
+
+async function writeStateInJson(data) {
+    try {
+        const response = await fetch('/api/json_data', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        });
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.error);
+        }
+    } catch (error) {
+        console.error('Fetch create race error', error);
     }
 }

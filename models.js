@@ -1,4 +1,8 @@
 class JsonData {
+    constructor() {
+        this.raceActive = false;
+        this.startTime = 0;
+    }
 }
 
 class Driver {
@@ -7,6 +11,7 @@ class Driver {
         this.car = car;
     }
 }
+
 class Race {
     constructor(id, drivers = []) {
         this.id = id;
@@ -32,7 +37,6 @@ class Race {
         if (this.availableCars.length === 0) {
             return { error: true, code: 'capacity' };
         }
-        
         if (!car) {
             car = this.availableCars.pop();
         } else if (car < 1 || car > 8) {
@@ -45,7 +49,6 @@ class Race {
         }
         if (car < 1 || car > 8) {
         }
-
         const matchingDriver = this.drivers.filter((driver) => driver.name === name);
         if (matchingDriver.length > 0) {
             return { error: true, code: 'name' };
@@ -54,10 +57,8 @@ class Race {
         if (matchingCar.length > 0) {
             return { error: true, code: 'car' };
         }
-
         const newDriver = new Driver(name, car);
         this.drivers.push(newDriver);
-
         return { error: false, code: null, car: car };
     }
 
