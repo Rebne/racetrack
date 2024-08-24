@@ -7,6 +7,7 @@
     <script src="/socket.io/socket.io.js"></script>
     <script src="../flag.js"></script>
     <script src="../countdown.js"></script>
+    <script src="../fetchdata.js"></script>
     <script>
     
     //GLOBAL variables
@@ -124,6 +125,10 @@
         const socket = io();
 
         socket.on('devMode', (data) => {
+            //for testing
+            readStateFromJson().then(data => {
+                console.log(data.test);
+            });
             if (data.isDevMode) {
                 countdownTime = 1 * 60;
                 timeRemaining.seconds = countdownTime;

@@ -126,16 +126,16 @@ async function deleteRaceInDB(race_id) {
     }
 }
 
-function readStateFromJson() {
+async function readStateFromJson() {
     try {
-        const response = fetch('/api/json_data', {
+        const response = await fetch('/api/json_data', {
             method: 'GET'
         });
         if (!response.ok) {
-            const errorData = response.json();
+            const errorData = await response.json();
             throw new Error(errorData.error);
         }
-        const data = response.json();
+        const data = await response.json();
         return data;
     } catch (error) {
         console.error('Fetch get json error', error);

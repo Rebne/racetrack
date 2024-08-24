@@ -30,8 +30,8 @@ app.post('/races', database.createRace);
 app.get('/races', database.readRaces);
 app.get('/drivers/:id', database.readDrivers);
 app.put('/drivers', database.updateDriver);
-app.post('/api/json_data', json_data.readJSON);
-app.get('/api/json_data', json_data.writeJSON);
+app.post('/api/json_data', json_data.writeJSON);
+app.get('/api/json_data', json_data.readJSON);
 
 app.get('/test', (_, res) => {
   res.sendFile(join(__dirname, 'static', 'test.html'));
@@ -72,8 +72,6 @@ app.get('/next-race', (_, res) => {
 io.on('connection', (socket) => {
 
   console.log('a user connected');
-
-  fetch('/')
 
   //router
   socket.onAny((eventName, data) => {
