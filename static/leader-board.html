@@ -19,6 +19,11 @@
     //this is an object because int/number cannot be passed to a function as a reference
     let timeRemaining = {seconds: countdownTime};
 
+    function isStringNumber(str) {
+        const num = Number(str);
+        return str === String(num);
+    }
+
     function min(a, b) {
         if (a < b) {return a;}
         else {return b;}
@@ -69,8 +74,28 @@
         return result;
     }
 
+    function populateDriverData() {
+        // Initialize last lap to start time for comparison
+        // +1 is added to length to be able to index with car numbers without changing them
+        lastLapTimestamp = new Array(drivers.length + 1).fill(startTime);
+        currentLapCount = new Array(drivers.length + 1).fill(1); 
+        for (let i = 0; i < localStorage.length; i++) {
+            const key = localStorage.key(i);
+            if (!isStringNumber(key)) {
+                continue
+            }
+            const value = JSON.parse(localStorage.getItem(key));
+            
+
+        } 
+
+    }
+
     function reloadDrivers(){
         removeDrivers();
+        if (localStorage.length > 0) {
+            populateDriverData();
+        }
         const carsInOrder = carsSortedByLapTime(bestLapTimes);
         const container = document.getElementById('container');
 
@@ -124,10 +149,11 @@
         const socket = io();
 
         socket.on('devMode', (data) => {
-            if (data.isDevMode) {
-                countdownTime = 1 * 60;
-                timeRemaining.seconds = countdownTime;
-            };
+            if (!data.isDevMode) {
+                return;
+            }
+            countdownTime = 1 * 60;
+            timeRemaining.seconds = countdownTime;
             //swapping to 1:00 for idle value
             const timer = document.getElementById('countdown');
             timer.textContent = '1:00';
@@ -170,6 +196,10 @@
 
         socket.on('connect', () => {
             console.log('Connected to server');
+            //Checking if there is an ongoing race
+            if (localStorage.length > 0) {
+                
+            }
         });
 
     });

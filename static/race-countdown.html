@@ -29,10 +29,11 @@
     let timeRemaining = {seconds: countdownTime};
 
     socket.on('devMode', (data) => {
-        if (data.isDevMode) {
-            countdownTime = 1 * 60;
-            timeRemaining.seconds = countdownTime;
+        if (!data.isDevMode) {
+            return;
         }
+        countdownTime = 1 * 60;
+        timeRemaining.seconds = countdownTime;
         //swapping to 1:00 for idle value
         const timer = document.getElementById('countdown');
         timer.textContent = '1:00';
@@ -41,9 +42,19 @@
 
     socket.on('connect', () => {
         console.log('Connected to server');
+        // When the race is ongoing
+        if (localStorage.length > 0) {
+            const startTime = parseInt(localStorage.getItem('startTime'));
+            console.log(`This is the startTime: ${startTime}`);
+            const timeSinceRaceStart = Math.floor((Date.now() - startTime) / 1000);
+            timeRemaining.seconds = countdownTime - timeSinceRaceStart;
+            updateCountdown(timeRemaining);
+        }
     });
 
-    socket.on('start:race', () => {
+
+
+    socket.on('start:race', (startTime) => {
         console.log('Race started');
         timeRemaining.seconds = countdownTime;
         updateCountdown(timeRemaining); // Start the countdown

@@ -44,7 +44,6 @@ async function getRacesInDB() {
             const errorData = await response.json();
             throw new Error(errorData.error);
         }
-        
         const data = response.json();
         return data;
 
@@ -58,15 +57,12 @@ async function getDriversInDB(race_id) {
         const response = await fetch(`/drivers/${race_id}`, {
             method: 'GET'
         });
-
         if (!response.ok) {
             const errorData = await response.json();
             throw new Error(errorData.error);
         }
-
         const data = await response.json();
         return data;
-
     } catch (error) {
         console.error('Fetch get drivers error', error);
     }

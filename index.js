@@ -4,7 +4,6 @@ import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
 import { Server } from 'socket.io';
 import * as database from './database.js';
-import * as json_data from './json_data.js';
 
 const app = express();
 const server = createServer(app);
