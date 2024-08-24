@@ -22,7 +22,6 @@ export default db;
 
 export function createRace(req, res) {
     const id = req.body.id;
-
     const sql = 'INSERT INTO races (id) VALUES (?);';
     db.run(sql, id, function (err) {
         if (err) {
@@ -32,9 +31,9 @@ export function createRace(req, res) {
         res.status(201);
     });
 }
+
 export function createDriver(req, res) {
     const { race_id, name, car } = req.body;
-
     const sql = 'INSERT INTO drivers (race_id, name, car) VALUES (?,?,?);';
     db.run(sql, [race_id, name, car], function (err) {
         if (err) {
@@ -47,7 +46,6 @@ export function createDriver(req, res) {
 
 export function updateDriver(req, res) {
     const { race_id, name, car } = req.body;
-
     const sql = 'UPDATE drivers SET name = ?, car = ? WHERE race_id = ? AND name = ? OR car = ?;';
     db.run(sql, [name, car, race_id, name, car], function (err) {
         if (err) {
@@ -55,7 +53,7 @@ export function updateDriver(req, res) {
             return;
         }
         res.status(200);
-    })
+    });
 }
 
 export function readRaces(_, res) {
@@ -71,7 +69,6 @@ export function readRaces(_, res) {
 
 export function readDrivers(req, res) {
     const race_id = parseInt(req.params.id);
-
     const sql = 'SELECT * FROM drivers WHERE race_id = ?;';
     db.all(sql, race_id, function (err, rows) {
         if (err) {
@@ -82,11 +79,8 @@ export function readDrivers(req, res) {
     });
 }
 
-
-
 export function deleteDriver(req, res) {
     const { name } = req.body;
-
     const sql = 'DELETE FROM drivers WHERE name = ?;';
     db.run(sql, name, function (err) {
         if (err) {
@@ -94,27 +88,22 @@ export function deleteDriver(req, res) {
             return;
         }
         res.status(200);
-    })
-
-
+    });
 }
 
 export function deleteRace(req, res) {
     const { id } = req.body;
-
     db.run("DELETE FROM races WHERE id = ?;", id, function (err) {
         if (err) {
             res.status(500).json({ error: err.message });
             return;
         }
     });
-
     db.run("DELETE FROM drivers WHERE race_id = ?;", id, function (err) {
         if (err) {
             res.status(500).json({ error: err.message });
             return;
         }
     });
-
     res.status(200);
 }

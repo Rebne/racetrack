@@ -3,7 +3,8 @@ import { createServer } from 'node:http';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
 import { Server } from 'socket.io';
-import * as appData from './database.js'
+import * as database from './database.js';
+import * as json_data from './json_data.js';
 
 const app = express();
 const server = createServer(app);
@@ -22,13 +23,15 @@ app.use(express.json());
 const __dirname = dirname(fileURLToPath(import.meta.url));
 app.use(express.static(__dirname));
 
-app.delete('/drivers', appData.deleteDriver)
-app.delete('/races', appData.deleteRace);
-app.post('/drivers', appData.createDriver);
-app.post('/races', appData.createRace);
-app.get('/races', appData.readRaces);
-app.get('/drivers/:id', appData.readDrivers);
-app.put('/drivers', appData.updateDriver);
+app.delete('/drivers', database.deleteDriver)
+app.delete('/races', database.deleteRace);
+app.post('/drivers', database.createDriver);
+app.post('/races', database.createRace);
+app.get('/races', database.readRaces);
+app.get('/drivers/:id', database.readDrivers);
+app.put('/drivers', database.updateDriver);
+app.post('/api/json_data', json_data.readJSON);
+app.get('/api/json_data', json_data.writeJSON);
 
 app.get('/test', (_, res) => {
   res.sendFile(join(__dirname, 'static', 'test.html'));
@@ -69,6 +72,8 @@ app.get('/next-race', (_, res) => {
 io.on('connection', (socket) => {
 
   console.log('a user connected');
+
+  fetch('/')
 
   //router
   socket.onAny((eventName, data) => {

@@ -1,3 +1,6 @@
+class JsonData {
+}
+
 class Driver {
     constructor(name, car) {
         this.name = name;

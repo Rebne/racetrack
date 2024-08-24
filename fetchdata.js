@@ -125,3 +125,19 @@ async function deleteRaceInDB(race_id) {
         console.error('Fetch delete race error', error);
     }
 }
+
+function readStateFromJson() {
+    try {
+        const response = fetch('/api/json_data', {
+            method: 'GET'
+        });
+        if (!response.ok) {
+            const errorData = response.json();
+            throw new Error(errorData.error);
+        }
+        const data = response.json();
+        return data;
+    } catch (error) {
+        console.error('Fetch get json error', error);
+    }
+}
