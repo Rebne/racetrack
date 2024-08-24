@@ -97,6 +97,7 @@
         const buttons = controlButtons.querySelectorAll('.flag-button');
         startButton.addEventListener('click', () => {
             startNewRace();
+            localStorage.setItem('startTime', Date.now().toString());
         });
 
         buttons.forEach(button => {
@@ -136,9 +137,7 @@
             controlButtons.style.display = 'block';
             const safeButton = controlButtons.querySelector('[data-flag="safe"]');
             safeButton.classList.add('active');
-            const raceStart = Date.now();
-            localStorage.setItem('startTime', raceStart.toString());
-            socket.emit('start:race', raceStart); // Emit start race signal
+            socket.emit('start:race'); // Emit start race signal
         }
     });
 

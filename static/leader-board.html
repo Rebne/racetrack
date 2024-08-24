@@ -49,7 +49,7 @@
     }
 
     function lapTimeAsString(ms) {
-        if (ms === Infinity) {return '00:00.0';}
+        if (ms === Number.MAX_VALUE) {return '00:00.0';}
         let result = '';
         const roundedSeconds = Math.round(ms / 1000);
         const minutes = Math.floor(roundedSeconds / 60);
@@ -122,9 +122,10 @@
             driverDiv.id = driver.car;
             driverDiv.className = 'driver';
             driverDiv.textContent = `Best lap: 00:00.0 Name: ${driver.name} Car: ${driver.car} Current lap: 1`;
-            bestLapTimes.set(driver.car, Infinity);
+            bestLapTimes.set(driver.car, Number.MAX_VALUE);
             carNameMap.set(driver.car, driver.name);
             container.appendChild(driverDiv);
+            storeDriverData(driver.car);
         });
     }
 

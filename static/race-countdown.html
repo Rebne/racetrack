@@ -51,9 +51,7 @@
         }
     });
 
-
-
-    socket.on('start:race', (startTime) => {
+    socket.on('start:race', () => {
         console.log('Race started');
         timeRemaining.seconds = countdownTime;
         updateCountdown(timeRemaining); // Start the countdown
