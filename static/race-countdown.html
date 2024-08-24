@@ -45,7 +45,6 @@
         // When the race is ongoing
         if (localStorage.length > 0) {
             const startTime = parseInt(localStorage.getItem('startTime'));
-            console.log(`This is the startTime: ${startTime}`);
             const timeSinceRaceStart = Math.floor((Date.now() - startTime) / 1000);
             timeRemaining.seconds = countdownTime - timeSinceRaceStart;
             updateCountdown(timeRemaining);

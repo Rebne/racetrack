@@ -248,10 +248,7 @@
         document.addEventListener("DOMContentLoaded", () => {
 
             const socket = io();
-
-            console.log(localStorage.length);
-            localStorage.setItem('key', 'value');
-
+            
             socket.on('start:race', () => {
                 //TODO: Maybe needs a check for empty array, but would be better to handle it elsewhere
 

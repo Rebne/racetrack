@@ -153,6 +153,30 @@
         localStorage.setItem(car.toString(), JSON.stringify(obj));
     }
 
+    function reloadCountdown() {
+        const startTime = parseInt(localStorage.getItem('startTime'));
+        const timeSinceRaceStart = Math.floor((Date.now() - startTime) / 1000);
+        timeRemaining.seconds = countdownTime - timeSinceRaceStart;
+        updateCountdown(timeRemaining);
+        const countdown = document.getElementById('countdown');
+        countdown.classList.remove('hidden');
+
+    }
+    function reloadState() {
+        populateDriverData();
+        renderFlag();
+        const flag = document.getElementById('flag');
+        const message = localStorage.getItem('safetyMessage');
+        if (message == 'finished') {
+            createCheckeredFlag(flag);
+        } else {
+            removeCheckeredFlag();
+            flag.style.backgroundColor = flag_colors.get(message);
+        }
+        reloadDrivers(); 
+        reloadCountdown();
+    }
+
     document.addEventListener("DOMContentLoaded", () => {
         const socket = io();
 
@@ -207,8 +231,7 @@
             console.log('Connected to server');
             //Checking if there is an ongoing race
             if (localStorage.length > 0) {
-                populateDriverData();
-                reloadDrivers(); 
+                reloadState();
             }
         });
 

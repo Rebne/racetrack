@@ -110,6 +110,7 @@
                 });
                 const message = button.dataset.flag;
                 socket.emit('flag:swap', message);
+                localStorage.setItem('safetyMessage', message);
                 if (message === 'finished') {
                     controlButtons.style.display = 'none';
                     endRaceSessionButton.style.display = 'block';

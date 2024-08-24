@@ -5,20 +5,34 @@
     <script src="/socket.io/socket.io.js"></script>
     <script src="../flag.js"></script>
     <script>
+        flag = document.body;
+
+        function renderFlag(message) {
+            const color = flag_colors.get(message);
+            if (message == 'finished') {
+                createCheckeredFlag(flag);
+            } else {
+                removeCheckeredFlag();
+                flag.style.backgroundColor = flag_colors.get(message);
+            }
+        }
+
         document.addEventListener("DOMContentLoaded", () => {
             const socket = io();
-            flag = document.body;
 
-            socket.on('start:race', () => {flag.style.backgroundColor = 'green';});
+            socket.on('connect', () => {
+                if(localStorage.length > 0) {
+                    renderFlag(localStorage.getItem('safetyMessage'));
+                }
+            });
+
+            socket.on('start:race', () => {
+                flag.style.backgroundColor = 'green';
+                localStorage.setItem('safetyMessage', 'green');
+            });
             
             socket.on('flag:swap', (message) => {
-                const color = flag_colors.get(message);
-                if (message == 'finished') {
-                    createCheckeredFlag(flag);
-                } else {
-                    removeCheckeredFlag();
-                    flag.style.backgroundColor = flag_colors.get(message);
-                }
+                renderFlag(message);
             });
         });
     </script>
