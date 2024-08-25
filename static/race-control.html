@@ -88,7 +88,6 @@
     </div>
 </div>
 <script>
-
     document.addEventListener("DOMContentLoaded", () => {
         const socket = io();
         const startButton = document.querySelector('.start-button');
@@ -96,6 +95,7 @@
         const endRaceSessionButton = document.querySelector('.end-race-session-button');
         const buttons = controlButtons.querySelectorAll('.flag-button');
         startButton.addEventListener('click', () => {
+            localStorage.clear();
             startNewRace();
             localStorage.setItem('startTime', Date.now().toString());
         });
@@ -113,32 +113,75 @@
                 socket.emit('flag:swap', message);
                 localStorage.setItem('safetyMessage', message);
                 if (message === 'finished') {
-                    controlButtons.style.display = 'none';
-                    endRaceSessionButton.style.display = 'block';
+                    displayEndSessionButton();
                     socket.emit('finish:race');
                 }
             });
         });
 
         endRaceSessionButton.addEventListener('click', () => {
-            endRaceSessionButton.style.display = 'none';
+            displayStartButton();
             socket.emit('flag:swap', 'danger');
-            startButton.style.display = 'block';
+            localStorage.clear();
         });
+
+        if (localStorage.length > 0) {
+            reloadButtonState();
+        }
 
         socket.on('connect', () => {
             console.log('Connected to server');
         });
 
-        socket.on('finish:race', () => localStorage.clear());
-
         function startNewRace() {
-            startButton.style.display = 'none';
-            controlButtons.style.display = 'block';
+            displayControlButtons();
             const safeButton = controlButtons.querySelector('[data-flag="safe"]');
             safeButton.classList.add('active');
             socket.emit('start:race'); // Emit start race signal
         }
+
+        function displayControlButtons() {
+            startButton.style.display = 'none';
+            endRaceSessionButton.style.display = 'none';
+            controlButtons.style.display = 'block';
+            if (localStorage.length > 0) {
+                let message = localStorage.getItem('safetyMessage');
+                // edge case where first safe flag is not written
+                if (!message) {message = 'safe';}
+                const activeButton = controlButtons.querySelector(`[data-flag="${message}"]`);
+                activeButton.classList.add('active');
+            }
+            localStorage.setItem('raceControlState', 'control');
+        }
+
+        function displayStartButton() {
+            localStorage.setItem('raceControlState', 'start');
+            startButton.style.display = 'block';
+            endRaceSessionButton.style.display = 'none';
+            controlButtons.style.display = 'none';
+        }
+
+        function displayEndSessionButton() {
+            localStorage.setItem('raceControlState', 'end');
+            startButton.style.display = 'none';
+            endRaceSessionButton.style.display = 'block';
+            controlButtons.style.display = 'none';
+        }
+
+        function reloadButtonState() {
+            switch(localStorage.getItem('raceControlState')) {
+                case 'start':
+                    displayStartButton();
+                    break;
+                case 'end':
+                    displayEndSessionButton();
+                    break;
+                case 'control':
+                    displayControlButtons();
+                    break;
+            }
+        }
+
     });
 
 </script>

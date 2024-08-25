@@ -5,8 +5,7 @@
     <script src="/socket.io/socket.io.js"></script>
     <script src="../flag.js"></script>
     <script>
-        flag = document.body;
-
+        let flag;
         function renderFlag(message) {
             const color = flag_colors.get(message);
             if (message == 'finished') {
@@ -18,6 +17,7 @@
         }
 
         document.addEventListener("DOMContentLoaded", () => {
+            flag = document.body;
             const socket = io();
 
             socket.on('connect', () => {
