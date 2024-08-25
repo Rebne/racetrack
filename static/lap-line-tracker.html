@@ -29,6 +29,7 @@
         const tutorial = document.getElementById('tutorial');
         tutorial.remove();
     }
+
     function removeButtons() {
         const buttons = document.getElementById('active');
         buttons.remove();
@@ -105,6 +106,7 @@
         socket.on('connect', () => {
             console.log('Connected to server');
         });
+
     });
 </script>
 <style>

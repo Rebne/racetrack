@@ -60,7 +60,7 @@
 - [x] The leaderboard shows the drivers name and car number
 - [x] The leaderboard shows the fastest lap time for each car
 - [x] The leaderboard shows the current lap for each car
-- [ ] The first lap starts when the car crosses the leader board for the first time
+- [x] The first lap starts when the car crosses the leader board for the first time
 
 ### Race Countdown and Flags (Race Driver)
 
@@ -78,7 +78,7 @@
 
 ### Extra Features
 
-- [ ] The system state is persisted (When the server is restarted, the system resumes with the exact same state)
+- [x] The system state is persisted (When the server is restarted, the system resumes with the exact same state)
 - [x] The receptionist can assign drivers to specific cars
 ### Interface Routes
 
