@@ -10,6 +10,11 @@
 
     const socket = io();
 
+    function isStringNumber(str) {
+        const num = Number(str);
+        return str === String(num);
+    }
+
     function createTutorial() {
         const tutorial = document.createElement('div');
         tutorial.className = 'tutorial';
@@ -30,7 +35,7 @@
     }
 
     // Function to create buttons dynamically
-    function createButtons(raceData) {
+    function createButtons(drivers) {
         const buttonWrapper = document.createElement('div');
         buttonWrapper.className = 'active';
         buttonWrapper.id = 'active';
@@ -38,7 +43,7 @@
 
         // Generate buttons dynamically based on raceData
 
-        raceData.drivers.forEach(driver => {
+        drivers.forEach(driver => {
             const button = document.createElement('button');
             button.className = 'car-button';
 
@@ -49,20 +54,38 @@
                 console.log(`Lap recorded for ${driver.name}`);
                 socket.emit('lap-recorded', driver.car);
             });
-
             buttonWrapper.appendChild(button);
         });
-
+    }
+    
+    function getDriverData() {
+        let result = [];
+        for (let i = 0; i < localStorage.length; i++) {
+            const key = localStorage.key(i);
+            if (!isStringNumber(key)) {
+                continue
+            }
+            const index = parseInt(key);
+            const driver = JSON.parse(localStorage.getItem(key));
+            result.push({name: driver.name, car: index});
+        }
+        //sorting result array in ascending order
+        result.sort((a,b) => a.car - b.car);
+        return result;
     }
 
     document.addEventListener("DOMContentLoaded", () => {
+        if (localStorage.length > 0) {
+            drivers = getDriverData();
+            createButtons(drivers);
+        } else {
+            createTutorial();
+        }
 
-        createTutorial();
-        
         // Handle race start event
         socket.on('race:data', (raceData) => {
             removeTutorial();
-            createButtons(raceData);
+            createButtons(raceData.drivers);
         });
 
         //handle race end event
