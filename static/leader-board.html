@@ -7,6 +7,7 @@
     <script src="/socket.io/socket.io.js"></script>
     <script src="../flag.js"></script>
     <script src="../countdown.js"></script>
+    <script src="../helpers.js"></script>
     <script>
     
     //GLOBAL variables
@@ -18,16 +19,6 @@
     let countdownTime = 10 * 60;
     //this is an object because int/number cannot be passed to a function as a reference
     let timeRemaining = {seconds: countdownTime};
-
-    function isStringNumber(str) {
-        const num = Number(str);
-        return str === String(num);
-    }
-
-    function min(a, b) {
-        if (a < b) {return a;}
-        else {return b;}
-    }
 
     function carsSortedByLapTime(map) {
         return Array.from(map.entries())

@@ -4,27 +4,19 @@
     <title>Next Race</title>
     <script src="/socket.io/socket.io.js"></script>
     <script src="../fetchdata.js"></script>
+    <script src="../helpers.js"></script>
     <script>
         const socket = io();
 
-        function min(x, y) {
-            if (x < y) {
-                return x
-            } else {
-                return y
-            }
-        }
-
         async function getNextRace() {
-
             races = await getRacesInDB();
-            if (!races || races.length == 0) {return -1};
-
+            if (!races || races.length == 0) {
+                return -1
+            };
             nextRace = races[0].id;
             for (const row of races) {
                 nextRace = min(nextRace, row.id);
             }
-
             return nextRace
 
         }
