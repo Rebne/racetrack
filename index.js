@@ -4,6 +4,7 @@ import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
 import { Server } from 'socket.io';
 import * as database from './database.js';
+import { readRacesLocally, readDriversLocally } from './database.js';
 
 const app = express();
 const server = createServer(app);
@@ -35,36 +36,70 @@ app.get('/test', (_, res) => {
 });
 
 app.get('/', (_, res) => {
-  res.sendFile(join(__dirname,'static', 'glossary.html'));
+  res.sendFile(join(__dirname, 'static', 'glossary.html'));
 });
 
 app.get('/race-control', (_, res) => {
-  res.sendFile(join(__dirname,'static', 'race-control.html'));
+  res.sendFile(join(__dirname, 'static', 'race-control.html'));
 });
 
 app.get('/race-flags', (_, res) => {
-  res.sendFile(join(__dirname,'static', 'flag.html'));
+  res.sendFile(join(__dirname, 'static', 'flag.html'));
 });
 
 app.get('/front-desk', (_, res) => {
-  res.sendFile(join(__dirname,'static', 'front-desk.html'));
+  res.sendFile(join(__dirname, 'static', 'front-desk.html'));
 });
 
 app.get('/race-countdown', (_, res) => {
-  res.sendFile(join(__dirname,'static','race-countdown.html'));
+  res.sendFile(join(__dirname, 'static', 'race-countdown.html'));
 });
 
 app.get('/lap-line-tracker', (_, res) => {
-  res.sendFile(join(__dirname,'static', 'lap-line-tracker.html'));
+  res.sendFile(join(__dirname, 'static', 'lap-line-tracker.html'));
 })
 
 app.get('/leader-board', (_, res) => {
-  res.sendFile(join(__dirname,'static', 'leader-board.html'));
+  res.sendFile(join(__dirname, 'static', 'leader-board.html'));
 })
 
 app.get('/next-race', (_, res) => {
-  res.sendFile(join(__dirname,'static', 'next-race.html'));
+  res.sendFile(join(__dirname, 'static', 'next-race.html'));
 })
+
+async function getNextRace() {
+  try {
+    const races = await readRacesLocally();
+    if (!races || races.length == 0) {
+      return -1
+    };
+    let nextRace = races[0].id;
+    for (const row of races) {
+      if (nextRace < row.id) {
+        nextRace = nextRace;
+      } else {
+        nextRace = row.id;
+      }
+    }
+    return nextRace
+  } catch (error) {
+    console.error('Error reading races', error);
+    return -1;
+  }
+}
+
+async function getRaceData(raceID) {
+  try {
+    let drivers = [];
+    const data = await readDriversLocally(raceID);
+    data.forEach((driver) => {
+      drivers.push({ name: driver.name, car: driver.car });
+    });
+    return { id: raceID, drivers: drivers };
+  } catch (error) {
+    console.error('Error reading drivers', error);
+  }
+}
 
 io.on('connection', (socket) => {
 
@@ -77,19 +112,25 @@ io.on('connection', (socket) => {
     io.emit(eventName, data);
   });
 
-  socket.emit('devMode', {isDevMode: isDevMode});
+  socket.emit('devMode', { isDevMode: isDevMode });
 
-  // Handle 'create:race' event
   socket.on('create:race', (data) => {
     console.log('New race created:', data);
-    // Broadcast the new race to all connected clients
     io.emit('new:race', data);
   });
 
-  // Handle lap recording
   socket.on('lap-recorded', (data) => {
     console.log(`Lap recorded for car: ${data.carName}`);
-    // Further processing, like updating lap counts, could go here
+  });
+
+  socket.on('start:race', async () => {
+    try {
+      const raceID = await getNextRace();
+      const race = await getRaceData(raceID);
+      io.emit('race:data', race);
+    } catch (error) {
+      console.error('Error emitting race:data', error);
+    }
   });
 
   socket.on('disconnect', () => {

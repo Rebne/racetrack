@@ -56,6 +56,20 @@ export function updateDriver(req, res) {
     });
 }
 
+export function readRacesLocally() {
+    return new Promise((resolve, reject) => {
+        const sql = 'SELECT * FROM races;';
+        db.all(sql, [], function (err, rows) {
+            if (err) {
+                console.error(err.message);
+                reject(err);
+            } else {
+                resolve(rows);
+            }
+        });
+    })
+}
+
 export function readRaces(_, res) {
     const sql = 'SELECT * FROM races;';
     db.all(sql, [], function (err, rows) {
@@ -64,6 +78,20 @@ export function readRaces(_, res) {
             return;
         }
         res.status(200).json(rows);
+    });
+}
+
+export function readDriversLocally(raceID) {
+    return new Promise((resolve, reject) => {
+        const sql = 'SELECT * FROM drivers WHERE race_id = ?;';
+        db.all(sql, raceID, function (err, rows) {
+            if (err) {
+                console.error(err.message);
+                reject(err);
+            } else {
+                resolve(rows);
+            }
+        });
     });
 }
 

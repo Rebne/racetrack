@@ -184,7 +184,8 @@
         });
         
         socket.on('race:data', (raceData) => {
-            raceStartTime = Date.now();
+            console.log(raceData);
+            raceStartTime = parseInt(localStorage.getItem('startTime'));
             initializeDrivers(raceData.drivers, raceStartTime);
         });
 
@@ -197,6 +198,9 @@
 
         socket.on('flag:swap', (message) => {
             const flag = document.getElementById('flag');
+            if (!flag) {
+                renderFlag();
+            }
             const color = flag_colors.get(message);
             if (message == 'finished') {
                 createCheckeredFlag(flag);
