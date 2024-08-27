@@ -28,7 +28,6 @@
 
             socket.on('start:race', () => {
                 flag.style.backgroundColor = 'green';
-                localStorage.setItem('safetyMessage', 'green');
             });
             
             socket.on('flag:swap', (message) => {

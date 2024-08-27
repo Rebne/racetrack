@@ -137,6 +137,7 @@
             displayControlButtons();
             const safeButton = controlButtons.querySelector('[data-flag="safe"]');
             safeButton.classList.add('active');
+            localStorage.setItem('safetyMessage', 'safe');
             socket.emit('start:race'); // Emit start race signal
         }
 
