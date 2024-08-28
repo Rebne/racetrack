@@ -4,7 +4,7 @@ import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
 import { Server } from 'socket.io';
 import * as database from './database.js';
-import { readRacesLocally, readDriversLocally } from './database.js';
+import { readRacesLocally, readDriversLocally , deleteRaceLocally} from './database.js';
 
 const app = express();
 const server = createServer(app);
@@ -114,11 +114,6 @@ io.on('connection', (socket) => {
 
   socket.emit('devMode', { isDevMode: isDevMode });
 
-  socket.on('create:race', (data) => {
-    console.log('New race created:', data);
-    io.emit('new:race', data);
-  });
-
   socket.on('lap-recorded', (data) => {
     console.log(`Lap recorded for car: ${data.carName}`);
   });
@@ -128,6 +123,11 @@ io.on('connection', (socket) => {
       const raceID = await getNextRace();
       const race = await getRaceData(raceID);
       io.emit('race:data', race);
+      //FOR DEV
+      /*
+      deleteRaceLocally(raceID);
+      io.emit('remove:race')
+      */
     } catch (error) {
       console.error('Error emitting race:data', error);
     }

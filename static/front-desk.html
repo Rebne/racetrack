@@ -250,17 +250,8 @@
             const socket = io();
             
             socket.on('remove:race', () => {
-                //TODO: Maybe needs a check for empty array, but would be better to handle it elsewhere
-
-                //FOR DEV
-                //race data emit moved to index.js
-                //this should be on 'race:data' and only deal with removing
-                /*
                 const nextRace = window.races.shift();
                 removeRaceDiv(nextRace.id);
-                deleteRaceInDB(nextRace.id);
-                socket.emit('race:data', nextRace);
-                */
             });
 
             readAllRacesFromDB().then(function (result) {

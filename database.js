@@ -118,6 +118,20 @@ export function deleteDriver(req, res) {
         res.status(200);
     });
 }
+export function deleteRaceLocally(raceID) {
+    db.run("DELETE FROM races WHERE id = ?;", raceID, function (err) {
+        if (err) {
+            console.error(err);
+            return;
+        }
+    });
+    db.run("DELETE FROM drivers WHERE race_id = ?;", raceID, function (err) {
+        if (err) {
+            console.error(err);
+            return;
+        }
+    });
+}
 
 export function deleteRace(req, res) {
     const { id } = req.body;
