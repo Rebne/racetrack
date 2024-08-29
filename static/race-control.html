@@ -88,7 +88,13 @@
     </div>
 </div>
 <script>
-    // <<>> /\ <<>> \\
+
+    function setDriversInLocalStorage(drivers) {
+    drivers.forEach((driver) => {
+        localStorage.setItem(driver.car.toString(), JSON.stringify({name: driver.name}));
+    });
+    }
+
     document.addEventListener("DOMContentLoaded", () => {
         const socket = io();
         const startButton = document.querySelector('.start-button');
@@ -132,6 +138,11 @@
 
         socket.on('connect', () => {
             console.log('Connected to server');
+        });
+
+        socket.on('race:data', (raceData) => {
+            console.log(raceData);
+            setDriversInLocalStorage(raceData.drivers);
         });
 
         function startNewRace() {
