@@ -1,4 +1,5 @@
 import express from 'express';
+import dotenv from 'dotenv';
 import { createServer } from 'node:http';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
@@ -6,7 +7,21 @@ import { Server } from 'socket.io';
 import * as database from './database.js';
 import { readRacesLocally, readDriversLocally , deleteRaceLocally} from './database.js';
 
-const app = express();
+dotenv.config();
+
+const REQUIRED_KEYS = ['FRONT_DESK_KEY','RACE_CONTROL_KEY', 'LAP_LINE_TRACKER_KEY']
+
+const missingKeys = REQUIRED_KEYS.filter(key => !process.env[key]);
+
+if (missingKeys.length > 0) {
+  console.error(`Error: Missing required environment variables: ${missingKeys.join(', ')}`);
+  process.exit(1);
+}
+
+const frontDeskKey = process.env['FRONT_DESK_KEY'];
+const raceControlKey = process.env['RACE_CONTROL_KEY'];
+const lapLineTrackerKey = process.env['LAP_LINE_TRACKER_KEY'];
+
 const server = createServer(app);
 const io = new Server(server);
 
