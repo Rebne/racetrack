@@ -32,11 +32,21 @@ let isDevMode = false;
 if (process.argv.length > 2 && process.argv[2] == 'dev') {
   isDevMode = true;
 }
+
 //||\\//\\//\\||//||\\
 app.use(express.json());
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 app.use(express.static(__dirname));
+
+// Middleware for checking acces codes
+const requireAccesKey = (req, res , next) => {
+  if (req.session.authenticated) {
+    next();
+  } else {
+    res.redirect('/login');
+  }
+};
 
 app.delete('/drivers', database.deleteDriver)
 app.delete('/races', database.deleteRace);
