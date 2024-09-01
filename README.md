@@ -4,8 +4,8 @@
 - [x] The server can be started with `npm start`
 - [x] The server can be started in developer mode with `npm run dev`
 - [ ] The interfaces are reachable by devices on other networks (not just localhost)
-- [ ] The server will not start unless environment variables are set for interface access keys
-- [ ] The environment variable access codes match the accepted access codes entered into the interfaces
+- [x] The server will not start unless environment variables are set for interface access keys
+- [x] The environment variable access codes match the accepted access codes entered into the interfaces
 
 ### Front Desk Interface (Receptionist)
 
@@ -71,9 +71,9 @@
 
 - [x] Communication between interfaces is in real-time. API calls must not be used to send data
 - [x] Communication between interfaces utilizes messages sent via Socket.IO
-- [ ] The Front Desk, Race Control and Lap-line Tracker require access codes to function correctly
-- [ ] The server waits 500ms to respond if an incorrect access key is entered in the interface
-- [ ] The interface re-prompts the user to enter a correct access key when an incorrect access key is inserted
+- [x] The Front Desk, Race Control and Lap-line Tracker require access codes to function correctly
+- [x] The server waits 500ms to respond if an incorrect access key is entered in the interface
+- [x] The interface re-prompts the user to enter a correct access key when an incorrect access key is inserted
 - [x] Communication between the interfaces certainly does not use a polling convention
 
 ### Extra Features

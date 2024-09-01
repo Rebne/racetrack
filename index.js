@@ -1,27 +1,26 @@
 import express from 'express';
 import dotenv from 'dotenv';
+import session from 'express-session';
 import { createServer } from 'node:http';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
 import { Server } from 'socket.io';
 import * as database from './database.js';
-import { readRacesLocally, readDriversLocally , deleteRaceLocally} from './database.js';
+import { readRacesLocally, readDriversLocally, deleteRaceLocally } from './database.js';
 
 dotenv.config();
 
-const REQUIRED_KEYS = ['FRONT_DESK_KEY','RACE_CONTROL_KEY', 'LAP_LINE_TRACKER_KEY']
+const REQUIRED_KEYS = ['FRONT_DESK_KEY', 'RACE_CONTROL_KEY', 'LAP_LINE_TRACKER_KEY']
 
 const missingKeys = REQUIRED_KEYS.filter(key => !process.env[key]);
 
 if (missingKeys.length > 0) {
+  console.log(missingKeys);
   console.error(`Error: Missing required environment variables: ${missingKeys.join(', ')}`);
   process.exit(1);
 }
 
-const frontDeskKey = process.env['FRONT_DESK_KEY'];
-const raceControlKey = process.env['RACE_CONTROL_KEY'];
-const lapLineTrackerKey = process.env['LAP_LINE_TRACKER_KEY'];
-
+const app = express();
 const server = createServer(app);
 const io = new Server(server);
 
@@ -33,21 +32,53 @@ if (process.argv.length > 2 && process.argv[2] == 'dev') {
   isDevMode = true;
 }
 
-//||\\//\\//\\||//||\\
-app.use(express.json());
+const interfaceAccessCodes = new Map([
+  ['front-desk', process.env['FRONT_DESK_KEY']],
+  ['race-control', process.env['RACE_CONTROL_KEY']],
+  ['lap-line-tracker', process.env['LAP_LINE_TRACKER_KEY']]
+]);
 
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 const __dirname = dirname(fileURLToPath(import.meta.url));
 app.use(express.static(__dirname));
+app.use(session({
+  secret: 'super-secret-secret',
+  resave: false,
+  saveUninitialized: true,
+  cookie: {}
+}));
 
 // Middleware for checking acces codes
-const requireAccesKey = (req, res , next) => {
-  if (req.session.authenticated) {
-    next();
-  } else {
-    res.redirect('/login');
-  }
+const requireAccesKey = (endpoint) => {
+  return (req, res, next) => {
+    if (req.session && req.session[endpoint]) {
+      next();
+    } else {
+      res.redirect('/login/' + endpoint);
+    }
+  };
 };
 
+app.post('/login/:endpoint', (req, res) => {
+  const { code } = req.body;
+  const { endpoint } = req.params;
+  if (code === interfaceAccessCodes.get(endpoint)) {
+    req.session = req.session || {};
+    req.session[endpoint] = true;
+    res.json({ success: true, redirectTo: `/${endpoint}` });
+  } else {
+    setTimeout(() => {
+      res.json({ success: false, message: 'Invalid access key' });
+    }, 500);
+  }
+});
+
+app.get('/login/*', (_, res) => {
+  res.sendFile(join(__dirname, 'static', 'login.html'));
+});
+
+//For database interactions
 app.delete('/drivers', database.deleteDriver)
 app.delete('/races', database.deleteRace);
 app.post('/drivers', database.createDriver);
@@ -64,7 +95,7 @@ app.get('/', (_, res) => {
   res.sendFile(join(__dirname, 'static', 'glossary.html'));
 });
 
-app.get('/race-control', (_, res) => {
+app.get('/race-control', requireAccesKey('race-control'), (_, res) => {
   res.sendFile(join(__dirname, 'static', 'race-control.html'));
 });
 
@@ -72,7 +103,7 @@ app.get('/race-flags', (_, res) => {
   res.sendFile(join(__dirname, 'static', 'flag.html'));
 });
 
-app.get('/front-desk', (_, res) => {
+app.get('/front-desk', requireAccesKey('front-desk'), (_, res) => {
   res.sendFile(join(__dirname, 'static', 'front-desk.html'));
 });
 
@@ -80,7 +111,7 @@ app.get('/race-countdown', (_, res) => {
   res.sendFile(join(__dirname, 'static', 'race-countdown.html'));
 });
 
-app.get('/lap-line-tracker', (_, res) => {
+app.get('/lap-line-tracker', requireAccesKey('lap-line-tracker'), (_, res) => {
   res.sendFile(join(__dirname, 'static', 'lap-line-tracker.html'));
 })
 

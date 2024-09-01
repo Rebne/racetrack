@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+
+<head>
+    <title>Access code</title>
+</head>
+
+<body>
+    <div class="container">
+        <h2>Enter Access Code</h2>
+        <form id="access-form" method="POST">
+            <input type="text" id="code" name="code" placeholder="Access Code" required>
+            <input type="submit" value="Submit">
+        </form>
+    </div>
+    <script>
+        document.getElementById('access-form').addEventListener('submit', async (event) => {
+            event.preventDefault();
+            const form = event.target;
+            const formData = new FormData(form);
+            const code = formData.get('code');
+
+            const currentUrl = window.location.pathname;
+            const endpoint = currentUrl.split('/').pop();
+
+            try {
+                const response = await fetch(`/login/${endpoint}`, {
+                    method: 'POST',
+                    body: JSON.stringify({ code }),
+                    headers: { 'Content-Type': 'application/json' }
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    window.location.href = result.redirectTo;
+                } else {
+                    alert(result.message);
+                }
+            } catch (error) {
+                console.error('Error during login:', error);
+            }
+        });
+    </script>
+</body>
