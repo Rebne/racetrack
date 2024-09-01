@@ -1,6 +1,7 @@
 import express from 'express';
 import dotenv from 'dotenv';
 import session from 'express-session';
+import os from 'os';
 import { createServer } from 'node:http';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
@@ -123,6 +124,19 @@ app.get('/next-race', (_, res) => {
   res.sendFile(join(__dirname, 'static', 'next-race.html'));
 })
 
+function getLocalIP() {
+    const networkInterfaces = os.networkInterfaces();
+    for (const interfaceName in networkInterfaces) {
+        const interfaces = networkInterfaces[interfaceName];
+        for (const iface of interfaces) {
+            if (iface.family === 'IPv4' && !iface.internal) {
+                return iface.address;
+            }
+        }
+    }
+    return null;
+}
+
 async function getNextRace() {
   try {
     const races = await readRacesLocally();
@@ -192,6 +206,7 @@ io.on('connection', (socket) => {
   });
 });
 
+const IP = getLocalIP();
 server.listen(port, () => {
-  console.log('server running at http://localhost:3000');
+  console.log(`server running on ${IP}:${port}`);
 });
