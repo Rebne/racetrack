@@ -193,9 +193,8 @@ io.on('connection', (socket) => {
       const raceID = await getNextRace();
       const race = await getRaceData(raceID);
       io.emit('race:data', race);
-      //FOR DEV
-      //deleteRaceLocally(raceID);
-      //io.emit('remove:race')
+      deleteRaceLocally(raceID);
+      io.emit('remove:race')
     } catch (error) {
       console.error('Error emitting race:data', error);
     }

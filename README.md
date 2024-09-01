@@ -3,7 +3,7 @@
 - [x] The server is written in Node.JS
 - [x] The server can be started with `npm start`
 - [x] The server can be started in developer mode with `npm run dev`
-- [ ] The interfaces are reachable by devices on other networks (not just localhost)
+- [x] The interfaces are reachable by devices on other networks (not just localhost)
 - [x] The server will not start unless environment variables are set for interface access keys
 - [x] The environment variable access codes match the accepted access codes entered into the interfaces
 
