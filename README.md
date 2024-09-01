@@ -27,7 +27,7 @@
 
 ### Race Control Interface (Safety Official)
 
-- [ ] If there is no upcoming race after the last session is ended, the Safety Official sees no upcoming races message
+- [x] If there is no upcoming race after the last session is ended, the Safety Official sees no upcoming races message
 - [x] The safety official has one active button, which starts the race when pressed
 - [x] When the race is started, the following happens:
   - The race mode is changed to "Safe"
@@ -39,7 +39,7 @@
 - [x] When the Safety Official selects "Danger", the Flag screen is red
 - [x] When the Safety Official selects "Finish", the Flag screen is chequered
 - [x] When the race mode changes to "Finish", the race controls disappear, and a button appears to end the race session
-- [ ] When the Safety Official ends the race session, the next session appears on their interface
+- [x] When the Safety Official ends the race session, the next session appears on their interface
 - [x] When the race session is ended, the race mode changes to "Danger"
 - [x] The Race Control interface is designed for a mobile interface
 
