@@ -5,70 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Race Control</title>
     <script src="/socket.io/socket.io.js"></script>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            background-color: #f5f5f5;
-        }
-
-        .container {
-            max-width: 80%;
-            width: 300px; /* Adjust width for mobile screens */
-            background-color: #ffffff;
-            border: 1px solid #ccc;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        }
-
-        .flag-button {
-            width: 100%;
-            padding: 10px;
-            margin-bottom: 10px;
-            cursor: pointer;
-            border: 1px solid #ccc;
-            background-color: #f0f0f0;
-            text-align: center;
-            border-radius: 5px;
-            font-size: 16px;
-        }
-
-        .flag-button.active {
-            background-color: #4CAF50;
-            color: white;
-        }
-
-        .end-race-session-button {
-            display: none;
-            width: 100%;
-            padding: 10px;
-            margin-top: 10px;
-            cursor: pointer;
-            border: 1px solid #ccc;
-            background-color: #f0f0f0;
-            text-align: center;
-            border-radius: 5px;
-            font-size: 16px;
-        }
-
-        .start-button {
-            width: 100%;
-            padding: 10px;
-            margin-top: 10px;
-            cursor: pointer;
-            border: 1px solid #ccc;
-            background-color: #f0f0f0;
-            text-align: center;
-            border-radius: 5px;
-            font-size: 16px;
-        }
-    </style>
+    <script src="../fetchdata.js"></script>
+    <script src="../helpers.js">    </script>
 </head>
 <body>
 <div class="container">
@@ -86,8 +24,62 @@
     <div>
         <button class="end-race-session-button">End Race Session</button>
     </div>
+    <div id="next-race" style="display: none;">
+
+    </div>
 </div>
 <script>
+    async function getNextRace() {
+        races = await getRacesInDB();
+        if (!races || races.length == 0) {
+            return -1
+        };
+        nextRace = races[0].id;
+        for (const row of races) {
+            nextRace = min(nextRace, row.id);
+        }
+        return nextRace
+    }
+
+    function generateDrivers(raceID, drivers) {
+        const nextRaceDiv = document.getElementById('next-race');
+        nextRaceDiv.innerHTML = `
+            <h2>Next Race: ${raceID}</h2>
+            <ul>
+                ${drivers.map(driver => `<li>${driver.name} - Car ${driver.car}</li>`).join('')}
+            </ul>
+        `;
+    }
+
+    function removePreviousRace() {
+        const container = document.querySelector('#next-race');
+        container.innerHTML = '';
+    }
+
+    function hideNextRace() {
+        const element = document.getElementById('next-race');
+        element.style.display = 'none'; 
+    }
+
+    function showNextRace() {
+        const element = document.getElementById('next-race');
+        element.style.display = 'block'; 
+    }
+
+    async function updateNextRace() {
+        removePreviousRace();
+        const nextRace = await getNextRace();
+        let drivers;
+        if (nextRace !== -1) {
+            drivers = await getDriversInDB(nextRace);
+        }
+        const container = document.querySelector('#next-race');
+        if (Array.isArray(drivers) && drivers.length > 0) {
+            generateDrivers(nextRace, drivers);
+        } else {
+            container.innerHTML = `<div class='message'>No upcoming races</div>`;
+        }
+    }
 
     function setDriversInLocalStorage(drivers) {
     drivers.forEach((driver) => {
@@ -95,12 +87,16 @@
     });
     }
 
+
     document.addEventListener("DOMContentLoaded", () => {
         const socket = io();
         const startButton = document.querySelector('.start-button');
         const controlButtons = document.querySelector('.control-buttons');
         const endRaceSessionButton = document.querySelector('.end-race-session-button');
         const buttons = controlButtons.querySelectorAll('.flag-button');
+        updateNextRace();
+        showNextRace();
+        
         startButton.addEventListener('click', () => {
             localStorage.clear();
             startNewRace();
@@ -154,6 +150,7 @@
         }
 
         function displayControlButtons() {
+            hideNextRace();
             startButton.style.display = 'none';
             endRaceSessionButton.style.display = 'none';
             controlButtons.style.display = 'block';
@@ -169,6 +166,8 @@
 
         function displayStartButton() {
             localStorage.setItem('raceControlState', 'start');
+            updateNextRace();
+            showNextRace();
             startButton.style.display = 'block';
             endRaceSessionButton.style.display = 'none';
             controlButtons.style.display = 'none';
@@ -176,6 +175,7 @@
 
         function displayEndSessionButton() {
             localStorage.setItem('raceControlState', 'end');
+            hideNextRace();
             startButton.style.display = 'none';
             endRaceSessionButton.style.display = 'block';
             controlButtons.style.display = 'none';
@@ -194,11 +194,74 @@
                     break;
             }
         }
-
     });
 
 </script>
 </body>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        background-color: #f5f5f5;
+    }
+
+    .container {
+        max-width: 80%;
+        width: 300px; /* Adjust width for mobile screens */
+        background-color: #ffffff;
+        border: 1px solid #ccc;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .flag-button {
+        width: 100%;
+        padding: 10px;
+        margin-bottom: 10px;
+        cursor: pointer;
+        border: 1px solid #ccc;
+        background-color: #f0f0f0;
+        text-align: center;
+        border-radius: 5px;
+        font-size: 16px;
+    }
+
+    .flag-button.active {
+        background-color: #4CAF50;
+        color: white;
+    }
+
+    .end-race-session-button {
+        display: none;
+        width: 100%;
+        padding: 10px;
+        margin-top: 10px;
+        cursor: pointer;
+        border: 1px solid #ccc;
+        background-color: #f0f0f0;
+        text-align: center;
+        border-radius: 5px;
+        font-size: 16px;
+    }
+
+    .start-button {
+        width: 100%;
+        padding: 10px;
+        margin-top: 10px;
+        cursor: pointer;
+        border: 1px solid #ccc;
+        background-color: #f0f0f0;
+        text-align: center;
+        border-radius: 5px;
+        font-size: 16px;
+    }
+</style>
 </html>
 
 
