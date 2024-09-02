@@ -248,7 +248,7 @@
         document.addEventListener("DOMContentLoaded", () => {
 
             const socket = io();
-            
+
             socket.on('remove:race', () => {
                 const nextRace = window.races.shift();
                 removeRaceDiv(nextRace.id);
@@ -264,7 +264,7 @@
                     }
                 }
                 idCounter = max + 1;
-                
+
             });
             updateAddDiv();
 
@@ -301,6 +301,12 @@
             border: 1px solid #ccc;
             margin: 0;
             padding: 10px;
+        }
+
+        @media screen and (orientation: portrait) {
+            button {
+                height: 50vh;
+            }
         }
 
         .close-button {
