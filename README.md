@@ -150,8 +150,8 @@ This code snippet ensures that the server is accessible not just on localhost, b
 #### 1. Clone the repository:
 
 ```bash
-git clone https://github.com/yourusername/race-management-system.git
-cd race-management-system
+git clone https://gitea.kood.tech/karmokupits/racetrack.git
+cd racetrack
 ```
 #### 2. Install dependencies:
 
