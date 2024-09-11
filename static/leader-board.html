@@ -20,6 +20,8 @@
     //this is an object because int/number cannot be passed to a function as a reference
     let timeRemaining = {seconds: countdownTime};
 
+    const socket = io();
+
     function carsSortedByLapTime(map) {
         return Array.from(map.entries())
         .sort((a, b) => a[1] - b[1])
@@ -36,7 +38,7 @@
         const flag = document.getElementById('flag');
         if (flag) flag.remove();
         const countdown = document.getElementById('countdown');
-        countdown.classList.add('hidden');
+        if (countdown) countdown.classList.add('hidden');
     }
 
     function lapTimeAsString(ms) {
@@ -121,9 +123,11 @@
     }
 
     function renderFlag() {
+        const container = document.getElementById('container');
+        if (!container) return;
         const flag = document.createElement('div');
         flag.id = 'flag';
-        document.getElementById('container').appendChild(flag);
+        container.appendChild(flag);
     }
 
     function updateLapTime(car) {
@@ -169,73 +173,72 @@
         reloadCountdown();
     }
 
-    document.addEventListener("DOMContentLoaded", () => {
-        const socket = io();
+    socket.on('devMode', (data) => {
+        if (!data.isDevMode) {
+            return;
+        }
+        countdownTime = 1 * 60;
+        timeRemaining.seconds = countdownTime;
+        //swapping to 1:00 for idle value
+        const timer = document.getElementById('countdown');
+        timer.textContent = '1:00';
+    });
+    
+    socket.on('race:data', (raceData) => {
+        console.log(raceData);
+        raceStartTime = parseInt(localStorage.getItem('startTime'));
+        initializeDrivers(raceData.drivers, raceStartTime);
+    });
 
-        socket.on('devMode', (data) => {
-            if (!data.isDevMode) {
-                return;
-            }
-            countdownTime = 1 * 60;
-            timeRemaining.seconds = countdownTime;
-            //swapping to 1:00 for idle value
-            const timer = document.getElementById('countdown');
-            timer.textContent = '1:00';
-        });
-        
-        socket.on('race:data', (raceData) => {
-            console.log(raceData);
-            raceStartTime = parseInt(localStorage.getItem('startTime'));
-            initializeDrivers(raceData.drivers, raceStartTime);
-        });
+    socket.on('start:race', () => {
+        const countdown = document.getElementById('countdown');
+        countdown.classList.remove('hidden');
+        updateCountdown(timeRemaining);
+        renderFlag();
+    });
 
-        socket.on('start:race', () => {
-            const countdown = document.getElementById('countdown');
-            countdown.classList.remove('hidden');
-            updateCountdown(timeRemaining);
+    socket.on('flag:swap', (message) => {
+        const flag = document.getElementById('flag');
+        if (!flag) {
             renderFlag();
-        });
+        }
+        const color = flag_colors.get(message);
+        if (message == 'finished') {
+            createCheckeredFlag(flag);
+        } else {
+            removeCheckeredFlag();
+            flag.style.backgroundColor = flag_colors.get(message);
+        }
+    });
 
-        socket.on('flag:swap', (message) => {
-            const flag = document.getElementById('flag');
-            if (!flag) {
-                renderFlag();
-            }
-            const color = flag_colors.get(message);
-            if (message == 'finished') {
-                createCheckeredFlag(flag);
-            } else {
-                removeCheckeredFlag();
-                flag.style.backgroundColor = flag_colors.get(message);
-            }
-        });
+    socket.on('lap-recorded', (car) => {
+        updateLapTime(car)
+        currentLapCount[car]++;
+        reloadDrivers();
+        storeDriverData(car);
+    });
 
-        socket.on('lap-recorded', (car) => {
-            updateLapTime(car)
-            currentLapCount[car]++;
-            reloadDrivers();
-            storeDriverData(car);
-        });
+    socket.on('finish:race', ()=> {
+        //resetting timer
+        timeRemaining.seconds = countdownTime;
+        // Do not remove the interface here
+    });
 
-        socket.on('finish:race', ()=> {
-            //resetting timer
-            timeRemaining.seconds = countdownTime;
-            // Do not remove the interface here
-        });
+    socket.on('race:end', () => {
+        removeAll();
+        localStorage.clear();
+    });
 
-        socket.on('race:end', () => {
-            removeAll();
-            localStorage.clear();
-        });
+    socket.on('connect', () => {
+        console.log('Connected to server');
+        //Checking if there is an ongoing race
+        if (localStorage.length > 0) {
+            reloadState();
+        }
+    });
 
-        socket.on('connect', () => {
-            console.log('Connected to server');
-            //Checking if there is an ongoing race
-            if (localStorage.length > 0) {
-                reloadState();
-            }
-        });
 
+    document.addEventListener("DOMContentLoaded", () => {
     });
 
     </script>
