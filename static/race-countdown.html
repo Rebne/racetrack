@@ -24,6 +24,12 @@
 <script src="/socket.io/socket.io.js"></script>
 <script src="../countdown.js"></script>
 <script>
+    function getTimeRemaining() {
+        const startTime = parseInt(localStorage.getItem('startTime'));
+        const timeSinceRaceStart = Math.floor((Date.now() - startTime) / 1000);
+        return countdownTime - timeSinceRaceStart;
+    }
+
     const socket = io();
     //converted timeRemaining to object because cant send integer/number as reference to a function
     let countdownTime = 10 * 60;
@@ -34,7 +40,11 @@
             return;
         }
         countdownTime = 1 * 60;
-        timeRemaining.seconds = countdownTime;
+        if (localStorage.length > 0) {
+            timeRemaining.seconds = getTimeRemaining();
+        } else {
+            timeRemaining.seconds = countdownTime;
+        }
         //swapping to 1:00 for idle value
         const timer = document.getElementById('countdown');
         timer.textContent = '1:00';
@@ -54,9 +64,7 @@
                 updateCountdown({seconds: -1});
                 return;
             }
-            const startTime = parseInt(localStorage.getItem('startTime'));
-            const timeSinceRaceStart = Math.floor((Date.now() - startTime) / 1000);
-            timeRemaining.seconds = countdownTime - timeSinceRaceStart;
+            timeRemaining.seconds = getTimeRemaining();
             updateCountdown(timeRemaining);
         }
     });
