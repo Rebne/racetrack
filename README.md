@@ -30,12 +30,13 @@
 
 ## Compliance Issues
 - [ ] Implement proper race mode changes and UI updates:
-  - [ ] Race controls should disappear and "end race" button should appear when race mode changes to "Finish"
+  - [x] Race controls should disappear and "end race" button should appear when race mode changes to "Finish"
   - [ ] Broadcast all race state changes through sockets in real-time
   - [ ] Ensure race sessions disappear from Front Desk interface once safe to start
-  - [ ] Change race mode to "Danger" when race session is ended
+  - [x] Change race mode to "Danger" when race session is ended
   - [ ] Update Lap-Line Observer interface in real-time when race session starts
   - [ ] Disable or hide buttons between races in Lap-Line Tracker
+  - [ ] Hide "Start race" button when no more races are in queue
 
 ## Network Accessibility
 - [x] Make interfaces accessible from external networks:
