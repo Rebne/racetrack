@@ -1,3 +1,47 @@
+# Race Management System Todo List
+
+## Environment Variables and Access Control
+- [x] Fix environment variable detection in dev and start modes
+- [x] Implement error handling for missing access keys
+- [x] Prevent server from starting if access keys are not defined
+
+## Race Management
+- [x] Handle duplicate car numbers consistently across frontend and backend
+- [x] Implement transaction reversal or proper error handling in the database layer
+
+## Real-time Communication
+- [x] Ensure race-control and next-race views receive updates without refresh
+- [x] Fix race-flag to receive and display correct flag state
+- [ ] Implement in-progress tracking for best laps on the leaderboard view
+- [ ] Update Lap-Line-Tracker to receive race state in real-time
+- [ ] Create best lap for racers even if race ends without lap-line-tracker interaction
+
+## Race Control and Flags
+- [ ] Prevent flag changes for completed races in Race-Control view
+- [ ] Review and potentially remove "None" flag option in Race-Control view
+- [ ] Update leaderboard flag display when race-control sets race to "Finish" state
+- [ ] Implement proper race start conditions (e.g., minimum number of racers)
+- [ ] Fix leaderboard flag display inconsistencies between races
+
+## Interface Updates
+- [ ] Update Front-desk view in real-time when race is started in race-control
+- [ ] Fix race reset issue when timer runs out but race is not marked as finished
+- [ ] Prevent non-existing races from being started
+
+## Compliance Issues
+- [ ] Implement proper race mode changes and UI updates:
+  - [ ] Race controls should disappear and "end race" button should appear when race mode changes to "Finish"
+  - [ ] Broadcast all race state changes through sockets in real-time
+  - [ ] Ensure race sessions disappear from Front Desk interface once safe to start
+  - [ ] Change race mode to "Danger" when race session is ended
+  - [ ] Update Lap-Line Observer interface in real-time when race session starts
+  - [ ] Disable or hide buttons between races in Lap-Line Tracker
+
+## Network Accessibility
+- [ ] Make interfaces accessible from external networks:
+  - [ ] Implement proper network configuration (port forwarding, firewall adjustments)
+  - [ ] Consider using ngrok for simplified external access (resolve CORS issues)
+
 # Race Management System
 
 ## Problem Statement
