@@ -64,7 +64,7 @@ app.use(session({
 // Middleware for checking acces codes
 const requireAccesKey = (endpoint) => {
   return (req, res, next) => {
-    if (req.session && req.session[endpoint]) {
+    if (isDevMode || (req.session && req.session[endpoint])) {
       next();
     } else {
       res.redirect('/login/' + endpoint);
@@ -75,7 +75,7 @@ const requireAccesKey = (endpoint) => {
 app.post('/login/:endpoint', (req, res) => {
   const { code } = req.body;
   const { endpoint } = req.params;
-  if (code === interfaceAccessCodes.get(endpoint)) {
+  if (isDevMode || code === interfaceAccessCodes.get(endpoint)) {
     req.session = req.session || {};
     req.session[endpoint] = true;
     res.json({ success: true, redirectTo: `/${endpoint}` });
