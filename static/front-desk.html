@@ -8,7 +8,7 @@
     <script src="../fetchdata.js"></script>
     <script src="../models.js"></script>
     <script>
-
+        let socket;
         let idCounter = 1;
 
         function handleAddDriverErrors(code) {
@@ -58,6 +58,7 @@
                 updateRaceDisplay(race);
                 if (result.car) {
                     createDriverInDB({ race_id: race.id, name: driverData.name, car: result.car });
+                    socket.emit('driver:added', { race_id: race.id, name: driverData.name, car: result.car });
                 }
             } else {
                 handleAddDriverErrors(result.code);
@@ -111,6 +112,7 @@
 
             document.body.appendChild(raceDiv);
             updateAddDiv();
+            socket.emit('race:added', { id: race.id });
         }
 
         function removeRaceDiv(raceID) {
@@ -139,6 +141,8 @@
             const driverRemoved = race.removeDriver(driver.name);
             if (driverRemoved) {
                 updateRaceDisplay(race);
+                deleteDriverInDB(driver.name);
+                socket.emit('driver:removed', { race_id: race.id, name: driver.name });
             } else {
                 alert('Driver was not removed with updateRaceDisplay for some reason')
             }
@@ -252,7 +256,7 @@
 
         document.addEventListener("DOMContentLoaded", () => {
 
-            const socket = io();
+            socket = io();
 
             socket.on('remove:race', () => {
                 const nextRace = window.races.shift();

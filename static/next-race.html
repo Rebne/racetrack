@@ -70,6 +70,21 @@
             initializeRaceData();
         });
 
+        socket.on('driver:added', (data) => {
+            console.log('Driver added:', data);
+            initializeRaceData();
+        });
+
+        socket.on('driver:removed', (data) => {
+            console.log('Driver removed:', data);
+            initializeRaceData();
+        });
+
+        socket.on('race:added', (data) => {
+            console.log('Race added:', data);
+            initializeRaceData();
+        });
+
         document.addEventListener('DOMContentLoaded', () => {
             initializeRaceData();
         });

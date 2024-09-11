@@ -141,6 +141,21 @@
             setDriversInLocalStorage(raceData.drivers);
         });
 
+        socket.on('driver:added', (data) => {
+            console.log('Driver added:', data);
+            updateNextRace();
+        });
+
+        socket.on('driver:removed', (data) => {
+            console.log('Driver removed:', data);
+            updateNextRace();
+        });
+
+        socket.on('race:added', (data) => {
+            console.log('Race added:', data);
+            updateNextRace();
+        });
+
         function startNewRace() {
             displayControlButtons();
             const safeButton = controlButtons.querySelector('[data-flag="safe"]');
