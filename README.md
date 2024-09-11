@@ -38,9 +38,9 @@
   - [ ] Disable or hide buttons between races in Lap-Line Tracker
 
 ## Network Accessibility
-- [ ] Make interfaces accessible from external networks:
-  - [ ] Implement proper network configuration (port forwarding, firewall adjustments)
-  - [ ] Consider using ngrok for simplified external access (resolve CORS issues)
+- [x] Make interfaces accessible from external networks:
+  - [-] ~~Implement proper network configuration (port forwarding, firewall adjustments)~~
+  - [x] Consider using ngrok for simplified external access (resolve CORS issues) - made ngrok a dependency for the project.
 
 # Race Management System
 
