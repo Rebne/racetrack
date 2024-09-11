@@ -34,25 +34,47 @@ export function createRace(req, res) {
 
 export function createDriver(req, res) {
     const { race_id, name, car } = req.body;
-    const sql = 'INSERT INTO drivers (race_id, name, car) VALUES (?,?,?);';
-    db.run(sql, [race_id, name, car], function (err) {
+    const sql = 'SELECT * FROM drivers WHERE race_id = ? AND car = ?';
+    db.get(sql, [race_id, car], (err, row) => {
         if (err) {
             res.status(500).json({ error: err.message });
             return;
         }
-        res.status(201);
+        if (row) {
+            res.status(400).json({ error: 'Car number already taken' });
+            return;
+        }
+        const insertSql = 'INSERT INTO drivers (race_id, name, car) VALUES (?,?,?);';
+        db.run(insertSql, [race_id, name, car], function (err) {
+            if (err) {
+                res.status(500).json({ error: err.message });
+                return;
+            }
+            res.status(201).json({ message: 'Driver created successfully' });
+        });
     });
 }
 
 export function updateDriver(req, res) {
     const { race_id, name, car } = req.body;
-    const sql = 'UPDATE drivers SET name = ?, car = ? WHERE race_id = ? AND name = ? OR car = ?;';
-    db.run(sql, [name, car, race_id, name, car], function (err) {
+    const sql = 'SELECT * FROM drivers WHERE race_id = ? AND car = ? AND name != ?';
+    db.get(sql, [race_id, car, name], (err, row) => {
         if (err) {
             res.status(500).json({ error: err.message });
             return;
         }
-        res.status(200);
+        if (row) {
+            res.status(400).json({ error: 'Car number already taken' });
+            return;
+        }
+        const updateSql = 'UPDATE drivers SET name = ?, car = ? WHERE race_id = ? AND name = ?;';
+        db.run(updateSql, [name, car, race_id, name], function (err) {
+            if (err) {
+                res.status(500).json({ error: err.message });
+                return;
+            }
+            res.status(200).json({ message: 'Driver updated successfully' });
+        });
     });
 }
 
