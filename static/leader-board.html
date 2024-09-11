@@ -150,14 +150,22 @@
     }
 
     function reloadCountdown() {
-        const startTime = parseInt(localStorage.getItem('startTime'));
-        const timeSinceRaceStart = Math.floor((Date.now() - startTime) / 1000);
-        timeRemaining.seconds = countdownTime - timeSinceRaceStart;
+        if (localStorage.getItem('raceFinished') === 'true') {
+            timeRemaining.seconds = -1;
+        } else {
+            timeRemaining.seconds = getTimeRemaining();
+        }
         updateCountdown(timeRemaining);
         const countdown = document.getElementById('countdown');
         countdown.classList.remove('hidden');
-
     }
+
+    function getTimeRemaining() {
+        const startTime = parseInt(localStorage.getItem('startTime'));
+        const timeSinceRaceStart = Math.floor((Date.now() - startTime) / 1000);
+        return countdownTime - timeSinceRaceStart;
+    }
+
     function reloadState() {
         populateDriverData();
         renderFlag();
@@ -178,7 +186,11 @@
             return;
         }
         countdownTime = 1 * 60;
-        timeRemaining.seconds = countdownTime;
+        if (localStorage.length > 0) {
+            timeRemaining.seconds = getTimeRemaining();
+        } else {
+            timeRemaining.seconds = countdownTime;
+        }
         //swapping to 1:00 for idle value
         const timer = document.getElementById('countdown');
         timer.textContent = '1:00';
@@ -219,9 +231,9 @@
     });
 
     socket.on('finish:race', ()=> {
-        //resetting timer
-        timeRemaining.seconds = countdownTime;
-        // Do not remove the interface here
+        timeRemaining.seconds = -1;
+        updateCountdown(timeRemaining);
+        localStorage.setItem('raceFinished', 'true');
     });
 
     socket.on('race:end', () => {
@@ -233,6 +245,13 @@
         console.log('Connected to server');
         //Checking if there is an ongoing race
         if (localStorage.length > 0) {
+            if (localStorage.getItem('raceFinished') === 'true') {
+                timeRemaining.seconds = -1;
+                updateCountdown(timeRemaining);
+            } else {
+                timeRemaining.seconds = getTimeRemaining();
+                updateCountdown(timeRemaining);
+            }
             reloadState();
         }
     });
