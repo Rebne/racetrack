@@ -12,9 +12,9 @@
 ## Real-time Communication
 - [x] Ensure race-control and next-race views receive updates without refresh
 - [x] Fix race-flag to receive and display correct flag state
-- [ ] Implement in-progress tracking for best laps on the leaderboard view
-- [ ] Update Lap-Line-Tracker to receive race state in real-time
-- [ ] Create best lap for racers even if race ends without lap-line-tracker interaction
+- [x] Implement in-progress tracking for best laps on the leaderboard view
+- [x] Update Lap-Line-Tracker to receive race state in real-time
+- [x] Create best lap for racers even if race ends without lap-line-tracker interaction
 
 ## Race Control and Flags
 - [ ] Prevent flag changes for completed races in Race-Control view
