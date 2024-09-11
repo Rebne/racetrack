@@ -11,14 +11,31 @@ import { readRacesLocally, readDriversLocally, deleteRaceLocally } from './datab
 
 dotenv.config();
 
-const REQUIRED_KEYS = ['FRONT_DESK_KEY', 'RACE_CONTROL_KEY', 'LAP_LINE_TRACKER_KEY']
+const REQUIRED_KEYS = ['FRONT_DESK_KEY', 'RACE_CONTROL_KEY', 'LAP_LINE_TRACKER_KEY'];
+const DEFAULT_KEY = 'default-key';
 
-const missingKeys = REQUIRED_KEYS.filter(key => !process.env[key]);
+REQUIRED_KEYS.forEach(key => {
+  if (!process.env[key]) {
+    process.env[key] = DEFAULT_KEY;
+  }
+});
 
-if (missingKeys.length > 0) {
-  console.log(missingKeys);
-  console.error(`Error: Missing required environment variables: ${missingKeys.join(', ')}`);
-  process.exit(1);
+let isDevMode = process.argv.length > 2 && process.argv[2] === 'dev';
+
+if (isDevMode) {
+  console.warn('Running in dev mode. Using default keys for missing environment variables.');
+  REQUIRED_KEYS.forEach(key => {
+    if (process.env[key] === DEFAULT_KEY) {
+      console.warn(`Warning: ${key} is set to the default value. Set this in your .env file for production use.`);
+    }
+  });
+} else {
+  const missingKeys = REQUIRED_KEYS.filter(key => process.env[key] === DEFAULT_KEY);
+  if (missingKeys.length > 0) {
+    console.error(`Error: Missing required environment variables: ${missingKeys.join(', ')}`);
+    console.error('Please set these variables in your .env file or as environment variables.');
+    process.exit(1);
+  }
 }
 
 const app = express();
@@ -26,12 +43,6 @@ const server = createServer(app);
 const io = new Server(server);
 
 const port = 3000;
-
-let isDevMode = false;
-
-if (process.argv.length > 2 && process.argv[2] == 'dev') {
-  isDevMode = true;
-}
 
 const interfaceAccessCodes = new Map([
   ['front-desk', process.env['FRONT_DESK_KEY']],
@@ -162,8 +173,12 @@ async function getRaceData(raceID) {
   try {
     let drivers = [];
     const data = await readDriversLocally(raceID);
+    const uniqueCars = new Set();
     data.forEach((driver) => {
-      drivers.push({ name: driver.name, car: driver.car });
+      if (!uniqueCars.has(driver.car)) {
+        drivers.push({ name: driver.name, car: driver.car });
+        uniqueCars.add(driver.car);
+      }
     });
     return { id: raceID, drivers: drivers };
   } catch (error) {
