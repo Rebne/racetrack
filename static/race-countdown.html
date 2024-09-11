@@ -41,10 +41,19 @@
         document.title = 'Race countdown (Dev Mode)';
     });
 
+    socket.on('finish:race', () => {
+        timeRemaining.seconds = -1;
+        updateCountdown(timeRemaining);
+    });
+
     socket.on('connect', () => {
         console.log('Connected to server');
         // When the race is ongoing
         if (localStorage.length > 0) {
+            if (localStorage.getItem('raceFinished') === 'true') {
+                updateCountdown({seconds: -1});
+                return;
+            }
             const startTime = parseInt(localStorage.getItem('startTime'));
             const timeSinceRaceStart = Math.floor((Date.now() - startTime) / 1000);
             timeRemaining.seconds = countdownTime - timeSinceRaceStart;

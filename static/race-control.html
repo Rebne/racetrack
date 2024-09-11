@@ -117,6 +117,7 @@
                 localStorage.setItem('safetyMessage', message);
                 if (message === 'finished') {
                     displayEndSessionButton();
+                    localStorage.setItem('raceFinished', 'true');
                     socket.emit('finish:race');
                 }
             });
