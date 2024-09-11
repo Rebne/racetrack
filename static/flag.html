@@ -12,8 +12,9 @@
                 createCheckeredFlag(flag);
             } else {
                 removeCheckeredFlag();
-                flag.style.backgroundColor = flag_colors.get(message);
+                flag.style.backgroundColor = color;
             }
+            localStorage.setItem('safetyMessage', message);
         }
 
         document.addEventListener("DOMContentLoaded", () => {
@@ -21,13 +22,14 @@
             const socket = io();
 
             socket.on('connect', () => {
-                if(localStorage.length > 0) {
-                    renderFlag(localStorage.getItem('safetyMessage'));
+                const safetyMessage = localStorage.getItem('safetyMessage');
+                if (safetyMessage) {
+                    renderFlag(safetyMessage);
                 }
             });
 
             socket.on('start:race', () => {
-                flag.style.backgroundColor = 'green';
+                renderFlag('safe');
             });
             
             socket.on('flag:swap', (message) => {
