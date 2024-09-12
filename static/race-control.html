@@ -214,7 +214,6 @@
         endRaceSessionButton.addEventListener('click', () => {
             displayStartButton();
             socket.emit('race:end');
-            socket.emit('flag:swap', 'danger');
             localStorage.clear();
         });
 

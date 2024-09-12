@@ -62,6 +62,11 @@
                 console.log('Flag swap event received with message:', message); // Debugging line
                 renderFlag(message);
             });
+
+            socket.on('race:end', () => {
+                renderFlag('danger');
+            });
+
         });
     </script>
 </body>
