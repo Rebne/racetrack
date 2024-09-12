@@ -111,16 +111,15 @@
             raceDiv.appendChild(closeButton);
 
             document.body.appendChild(raceDiv);
-            updateAddDiv();
+            updateAddDiv(); 
+            window.races.push(race);
             socket.emit('race:added', { id: race.id });
         }
 
         function removeRaceDiv(raceID) {
             const raceToRemove = document.getElementById(`race-${raceID}`);
-            if (raceToRemove) {
-                raceToRemove.remove();
-                window.races = window.races.filter(race => race.id !== raceID);
-            }
+            raceToRemove.remove();
+            window.races = window.races.filter(race => race.id !== raceID); 
         }
 
         function updateAddDiv() {
@@ -227,18 +226,14 @@
 
         // This function reads all the race data from DB and return an array of all races as result
         async function readAllRacesFromDB() {
-
             let result = [];
             const racesFromDB = await getRacesInDB();
 
             for (const row of racesFromDB) {
-
                 const race = new Race(row.id);
-                // array needed for keeping track of all the races
                 result.push(race);
 
                 const drivers = await getDriversInDB(row.id)
-
                 drivers.forEach((driver) => {
                     race.addDriver(driver.name, driver.car);
                 });
@@ -247,21 +242,8 @@
                 updateRaceDisplay(race)
             }
 
-            //SORT just in case for the next race being the first one
-            result.sort((a, b) => {
-                if (a.id < b.id) return -1;
-                if (a.id > b.id) return 1;
-                return 0;
-            });
-
+            result.sort((a, b) => a.id - b.id);
             return result;
-        }
-
-        function handleRaceStart() {
-            if (window.races && window.races.length > 0) {
-                const startedRace = window.races.shift();
-                removeRaceDiv(startedRace.id);
-            }
         }
 
         document.addEventListener("DOMContentLoaded", () => {
@@ -269,14 +251,14 @@
             socket = io();
 
             socket.on('remove:race', () => {
-                const nextRace = window.races.shift();
-                removeRaceDiv(nextRace.id);
+                if (window.races && window.races.length > 0) {
+                    const nextRace = window.races.shift();
+                    removeRaceDiv(nextRace.id);
+                }
             });
 
-            socket.on('start:race', handleRaceStart);
-
             readAllRacesFromDB().then(function (result) {
-                window.races = result;
+                window.races = result || []; 
                 let max = 0;
                 for (let i = 0; i < result.length; i++) {
                     race = result[i]
@@ -285,11 +267,9 @@
                     }
                 }
                 idCounter = max + 1;
-
             });
+
             updateAddDiv();
-
-
         });
     </script>
     <style>

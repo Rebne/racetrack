@@ -15,7 +15,6 @@
     </div>
     <div class="control-buttons" style="display: none;">
         <!-- Initially hidden with inline style -->
-        <button class="flag-button" data-flag="none">None</button>
         <button class="flag-button" data-flag="safe">Safe</button>
         <button class="flag-button" data-flag="hazard">Hazard</button>
         <button class="flag-button" data-flag="danger">Danger</button>
@@ -29,6 +28,9 @@
     </div>
 </div>
 <script>
+    const socket = io();
+    let startButton, controlButtons, endRaceSessionButton, buttons;
+
     async function getNextRace() {
         races = await getRacesInDB();
         if (!races || races.length == 0) {
@@ -82,18 +84,106 @@
     }
 
     function setDriversInLocalStorage(drivers) {
-    drivers.forEach((driver) => {
-        localStorage.setItem(driver.car.toString(), JSON.stringify({name: driver.name}));
-    });
+        drivers.forEach((driver) => {
+            localStorage.setItem(driver.car.toString(), JSON.stringify({name: driver.name}));
+        });
     }
 
+    function startNewRace() {
+        displayControlButtons();
+        const safeButton = controlButtons.querySelector('[data-flag="safe"]');
+        safeButton.classList.add('active');
+        localStorage.setItem('safetyMessage', 'safe');
+        socket.emit('remove:race');
+    }
+
+    function displayControlButtons() {
+        hideNextRace();
+        startButton.style.display = 'none';
+        endRaceSessionButton.style.display = 'none';
+        controlButtons.style.display = 'block';
+        if (localStorage.length > 0) {
+            let message = localStorage.getItem('safetyMessage');
+            // edge case where first safe flag is not written
+            if (!message) {message = 'safe';}
+            const activeButton = controlButtons.querySelector(`[data-flag="${message}"]`);
+            activeButton.classList.add('active');
+        }
+        localStorage.setItem('raceControlState', 'control');
+    }
+
+    function displayStartButton() {
+        localStorage.setItem('raceControlState', 'start');
+        updateNextRace();
+        showNextRace();
+        startButton.style.display = 'block';
+        endRaceSessionButton.style.display = 'none';
+        controlButtons.style.display = 'none';
+    }
+
+    function displayEndSessionButton() {
+        localStorage.setItem('raceControlState', 'end');
+        hideNextRace();
+        startButton.style.display = 'none';
+        endRaceSessionButton.style.display = 'block';
+        controlButtons.style.display = 'none';
+    }
+
+    function reloadButtonState() {
+        switch(localStorage.getItem('raceControlState')) {
+            case 'start':
+                displayStartButton();
+                break;
+            case 'end':
+                displayEndSessionButton();
+                break;
+            case 'control':
+                displayControlButtons();
+                break;
+        }
+    }
+
+    socket.on('connect', () => {
+        console.log('Connected to server');
+    });
+
+    socket.on('race:data', (raceData) => {
+        console.log(raceData);
+        setDriversInLocalStorage(raceData.drivers);
+        startNewRace();
+        localStorage.setItem('startTime', Date.now().toString());
+    });
+
+    socket.on('driver:added', (data) => {
+        console.log('Driver added:', data);
+        updateNextRace();
+    });
+
+    socket.on('driver:removed', (data) => {
+        console.log('Driver removed:', data);
+        updateNextRace();
+    });
+
+    socket.on('race:added', (data) => {
+        console.log('Race added:', data);
+        updateNextRace();
+    });
+
+    socket.on('race:error', (data) => {
+        alert(data.message);
+        displayStartButton();
+    });
+
+    socket.on('finish:race', () => {
+        displayEndSessionButton();
+        localStorage.setItem('raceFinished', 'true');
+    });
 
     document.addEventListener("DOMContentLoaded", () => {
-        const socket = io();
-        const startButton = document.querySelector('.start-button');
-        const controlButtons = document.querySelector('.control-buttons');
-        const endRaceSessionButton = document.querySelector('.end-race-session-button');
-        const buttons = controlButtons.querySelectorAll('.flag-button');
+        startButton = document.querySelector('.start-button');
+        controlButtons = document.querySelector('.control-buttons');
+        endRaceSessionButton = document.querySelector('.end-race-session-button');
+        buttons = controlButtons.querySelectorAll('.flag-button');
         updateNextRace();
         showNextRace();
         
@@ -115,8 +205,6 @@
                 socket.emit('flag:swap', message);
                 localStorage.setItem('safetyMessage', message);
                 if (message === 'finished') {
-                    displayEndSessionButton();
-                    localStorage.setItem('raceFinished', 'true');
                     socket.emit('finish:race');
                 }
             });
@@ -132,91 +220,6 @@
         if (localStorage.length > 0) {
             reloadButtonState();
         }
-
-        socket.on('connect', () => {
-            console.log('Connected to server');
-        });
-
-        socket.on('race:data', (raceData) => {
-            console.log(raceData);
-            setDriversInLocalStorage(raceData.drivers);
-            startNewRace();
-            localStorage.setItem('startTime', Date.now().toString());
-        });
-
-        socket.on('driver:added', (data) => {
-            console.log('Driver added:', data);
-            updateNextRace();
-        });
-
-        socket.on('driver:removed', (data) => {
-            console.log('Driver removed:', data);
-            updateNextRace();
-        });
-
-        socket.on('race:added', (data) => {
-            console.log('Race added:', data);
-            updateNextRace();
-        });
-
-        function startNewRace() {
-            displayControlButtons();
-            const safeButton = controlButtons.querySelector('[data-flag="safe"]');
-            safeButton.classList.add('active');
-            localStorage.setItem('safetyMessage', 'safe');
-            socket.emit('remove:race');
-        }
-
-        function displayControlButtons() {
-            hideNextRace();
-            startButton.style.display = 'none';
-            endRaceSessionButton.style.display = 'none';
-            controlButtons.style.display = 'block';
-            if (localStorage.length > 0) {
-                let message = localStorage.getItem('safetyMessage');
-                // edge case where first safe flag is not written
-                if (!message) {message = 'safe';}
-                const activeButton = controlButtons.querySelector(`[data-flag="${message}"]`);
-                activeButton.classList.add('active');
-            }
-            localStorage.setItem('raceControlState', 'control');
-        }
-
-        function displayStartButton() {
-            localStorage.setItem('raceControlState', 'start');
-            updateNextRace();
-            showNextRace();
-            startButton.style.display = 'block';
-            endRaceSessionButton.style.display = 'none';
-            controlButtons.style.display = 'none';
-        }
-
-        function displayEndSessionButton() {
-            localStorage.setItem('raceControlState', 'end');
-            hideNextRace();
-            startButton.style.display = 'none';
-            endRaceSessionButton.style.display = 'block';
-            controlButtons.style.display = 'none';
-        }
-
-        function reloadButtonState() {
-            switch(localStorage.getItem('raceControlState')) {
-                case 'start':
-                    displayStartButton();
-                    break;
-                case 'end':
-                    displayEndSessionButton();
-                    break;
-                case 'control':
-                    displayControlButtons();
-                    break;
-            }
-        }
-
-        socket.on('race:error', (data) => {
-            alert(data.message);
-            displayStartButton();
-        });
     });
 
 </script>
@@ -286,5 +289,3 @@
     }
 </style>
 </html>
-
-

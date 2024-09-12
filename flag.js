@@ -20,4 +20,4 @@ function removeCheckeredFlag () {
     }
 }
 
-const flag_colors = new Map([['safe', 'green'],['danger', 'red'], ['hazard', 'yellow'], ['none', 'white'],['finished', 'checkered']]);
+const flag_colors = new Map([['safe', 'green'],['danger', 'red'], ['hazard', 'yellow'], ['finished', 'checkered']]);
