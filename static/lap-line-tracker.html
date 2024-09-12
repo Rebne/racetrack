@@ -145,18 +145,30 @@
         max-height: 50%;
         margin: 0px;
         padding: 0px;
-        border: 2px solid #007bff;
+        border: 2px solid;
         border-radius: 10px;
         background-color: #ffffff;
         font-size: 24px;
         cursor: pointer;
         transition: background-color 0.3s, color 0.3s;
+        color: #000;
     }
-
-    .car-button:hover {
-        background-color: #007bff;
-        color: #ffffff;
-    }
+    .car-button:nth-child(1) { border-color: #FFB3BA; }
+    .car-button:nth-child(2) { border-color: #BAFFC9; }
+    .car-button:nth-child(3) { border-color: #BAE1FF; }
+    .car-button:nth-child(4) { border-color: #FFFFBA; }
+    .car-button:nth-child(5) { border-color: #FFDFBA; }
+    .car-button:nth-child(6) { border-color: #E1BAFF; }
+    .car-button:nth-child(7) { border-color: #BAF7FF; }
+    .car-button:nth-child(8) { border-color: #F0FFBA; }
+    .car-button:nth-child(1):hover { background-color: #FFB3BA;}
+    .car-button:nth-child(2):hover { background-color: #BAFFC9;}
+    .car-button:nth-child(3):hover { background-color: #BAE1FF;}
+    .car-button:nth-child(4):hover { background-color: #FFFFBA;}
+    .car-button:nth-child(5):hover { background-color: #FFDFBA;}
+    .car-button:nth-child(6):hover { background-color: #E1BAFF;}
+    .car-button:nth-child(7):hover { background-color: #BAF7FF;}
+    .car-button:nth-child(8):hover { background-color: #F0FFBA;}
 
     @media screen and (orientation: portrait) {
         button {
