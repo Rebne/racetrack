@@ -21,11 +21,11 @@
 - [ ] Review and potentially remove "None" flag option in Race-Control view
 - [ ] Update leaderboard flag display when race-control sets race to "Finish" state
 - [ ] Implement proper race start conditions (e.g., minimum number of racers)
-- [ ] Fix leaderboard flag display inconsistencies between races
+- [ ] Fix leaderboard flag display inconsistencies between races (Null flag error)
 
 ## Interface Updates
-- [ ] Update Front-desk view in real-time when race is started in race-control
-- [ ] Fix race reset issue when timer runs out but race is not marked as finished
+- [x] Update Front-desk view in real-time when race is started in race-control
+- [x] Fix race reset issue when timer runs out but race is not marked as finished
 - [ ] Prevent non-existing races from being started
 
 ## Compliance Issues

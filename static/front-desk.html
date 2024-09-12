@@ -117,7 +117,10 @@
 
         function removeRaceDiv(raceID) {
             const raceToRemove = document.getElementById(`race-${raceID}`);
-            raceToRemove.remove();
+            if (raceToRemove) {
+                raceToRemove.remove();
+                window.races = window.races.filter(race => race.id !== raceID);
+            }
         }
 
         function updateAddDiv() {
@@ -254,6 +257,13 @@
             return result;
         }
 
+        function handleRaceStart() {
+            if (window.races && window.races.length > 0) {
+                const startedRace = window.races.shift();
+                removeRaceDiv(startedRace.id);
+            }
+        }
+
         document.addEventListener("DOMContentLoaded", () => {
 
             socket = io();
@@ -262,6 +272,8 @@
                 const nextRace = window.races.shift();
                 removeRaceDiv(nextRace.id);
             });
+
+            socket.on('start:race', handleRaceStart);
 
             readAllRacesFromDB().then(function (result) {
                 window.races = result;
