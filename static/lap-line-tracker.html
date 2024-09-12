@@ -48,7 +48,6 @@
             button.textContent = driver.car;
 
             button.addEventListener('click', () => {
-                console.log(`Lap recorded for ${driver.name}`);
                 socket.emit('lap-recorded', driver.car);
             });
             buttonWrapper.appendChild(button);

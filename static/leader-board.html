@@ -76,7 +76,6 @@
         removeDrivers();
         const carsInOrder = carsSortedByLapTime(bestLapTimes);
         const container = document.getElementById('container');
-        console.log(carsInOrder);
 
         carsInOrder.forEach(car => {
             const name = carNameMap.get(car);
@@ -119,7 +118,6 @@
         }
 
         const message = localStorage.getItem('safetyMessage');
-        console.log('Rendering flag with message:', message); 
 
         removeCheckeredFlag(); 
         if (message === 'finished') {
@@ -175,7 +173,6 @@
     });
     
     socket.on('race:data', (raceData) => {
-        console.log(raceData);
         raceStartTime = parseInt(localStorage.getItem('startTime'));
         initializeDrivers(raceData.drivers, raceStartTime);
     });

@@ -95,7 +95,6 @@
     safeButton.classList.add('active');
     localStorage.setItem('safetyMessage', 'safe');
     socket.emit('remove:race');
-    console.log('Emitted remove:race event');
 }
 
     function displayControlButtons() {
@@ -149,24 +148,20 @@
     });
 
     socket.on('race:data', (raceData) => {
-        console.log(raceData);
         setDriversInLocalStorage(raceData.drivers);
         startNewRace();
         localStorage.setItem('startTime', Date.now().toString());
     });
 
     socket.on('driver:added', (data) => {
-        console.log('Driver added:', data);
         updateNextRace();
     });
 
     socket.on('driver:removed', (data) => {
-        console.log('Driver removed:', data);
         updateNextRace();
     });
 
     socket.on('race:added', (data) => {
-        console.log('Race added:', data);
         updateNextRace();
     });
 

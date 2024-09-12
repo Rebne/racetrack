@@ -54,12 +54,10 @@
             });
 
             socket.on('start:race', () => {
-                console.log('Start race event received');
                 renderFlag('safe');
             });
 
             socket.on('flag:swap', (message) => {
-                console.log('Flag swap event received with message:', message); // Debugging line
                 renderFlag(message);
             });
 

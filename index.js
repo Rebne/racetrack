@@ -221,16 +221,10 @@ io.on('connection', (socket) => {
 
   //router
   socket.onAny((eventName, data) => {
-    console.log(eventName);
-    console.log(data);
     io.emit(eventName, data);
   });
 
   socket.emit('devMode', { isDevMode: isDevMode });
-
-  socket.on('lap-recorded', (data) => {
-    console.log(`Lap recorded for car: ${data.carName}`);
-  });
 
   socket.on('finish:race', () => {
     clearTimeout(countdownTimer);
