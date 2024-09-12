@@ -8,6 +8,8 @@ import { dirname, join } from 'node:path';
 import { Server } from 'socket.io';
 import * as database from './database.js';
 import { readRacesLocally, readDriversLocally, deleteRaceLocally } from './database.js';
+import { EventEmitter } from 'events';
+import { setTimeout, clearTimeout } from 'timers';
 
 dotenv.config();
 
@@ -186,6 +188,34 @@ async function getRaceData(raceID) {
   }
 }
 
+// handling race countdown
+const raceEmitter = new EventEmitter();
+let countdownTimer;
+let countdownTime;
+
+function startCountdown(duration) {
+  countdownTime = duration;
+  clearTimeout(countdownTimer);
+  
+  function tick() {
+    io.emit('countdown', countdownTime);
+    if (countdownTime <= 0) {
+      clearTimeout(countdownTimer);
+      raceEmitter.emit('raceFinished');
+    } else {
+      countdownTime--;
+      countdownTimer = setTimeout(tick, 1000);
+    }
+  }
+  
+  tick();
+}
+
+raceEmitter.on('raceFinished', () => {
+  io.emit('finish:race');
+  io.emit('flag:swap', 'finished');
+});
+
 io.on('connection', (socket) => {
 
   console.log('a user connected');
@@ -218,6 +248,10 @@ io.on('connection', (socket) => {
       io.emit('race:data', race);
       deleteRaceLocally(raceID);
       io.emit('remove:race');
+      
+      // Start the countdown
+      const duration = isDevMode ? 60 : 600; // 1 minute for dev, 10 minutes for production
+      startCountdown(duration);
     } catch (error) {
       console.error('Error emitting race:data', error);
       socket.emit('race:error', { message: 'An error occurred while starting the race.' });
