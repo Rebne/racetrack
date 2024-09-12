@@ -26,17 +26,17 @@
 ## Interface Updates
 - [x] Update Front-desk view in real-time when race is started in race-control
 - [x] Fix race reset issue when timer runs out but race is not marked as finished
-- [ ] Prevent non-existing races from being started
+- [x] Prevent non-existing races from being started
 
 ## Compliance Issues
 - [ ] Implement proper race mode changes and UI updates:
   - [x] Race controls should disappear and "end race" button should appear when race mode changes to "Finish"
-  - [ ] Broadcast all race state changes through sockets in real-time
-  - [ ] Ensure race sessions disappear from Front Desk interface once safe to start
+  - [ ] Broadcast all race state changes through sockets in real-time - currently still need to refresh occasionally, not everything happens in real time.
+  - [x] Ensure race sessions disappear from Front Desk interface once safe to start
   - [x] Change race mode to "Danger" when race session is ended
   - [ ] Update Lap-Line Observer interface in real-time when race session starts
   - [ ] Disable or hide buttons between races in Lap-Line Tracker
-  - [ ] Hide "Start race" button when no more races are in queue
+  - [x] ~~Hide "Start race" button when no more races are in queue~~ Race cannot be started unless there is one in queue.
 
 ## Network Accessibility
 - [x] Make interfaces accessible from external networks:
