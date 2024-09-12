@@ -17,11 +17,11 @@
 - [x] Create best lap for racers even if race ends without lap-line-tracker interaction
 
 ## Race Control and Flags
-- [ ] Prevent flag changes for completed races in Race-Control view
+- [x] Prevent flag changes for completed races in Race-Control view
 - [x] Review and potentially remove "None" flag option in Race-Control view
 - [x] Update leaderboard flag display when race-control sets race to "Finish" state
 - [x] Implement proper race start conditions (e.g., minimum number of racers)
-- [ ] Fix leaderboard flag display inconsistencies between races (Null flag error)
+- [x] Fix leaderboard flag display inconsistencies between races (Null flag error)
 
 ## Interface Updates
 - [x] Update Front-desk view in real-time when race is started in race-control

@@ -121,29 +121,25 @@
     }
 
     function renderFlag() {
-    const container = document.getElementById('container');
-    if (!container) return;
-    let flag = document.getElementById('flag');
-    if (!flag) {
-        flag = document.createElement('div');
-        flag.id = 'flag';
-        container.appendChild(flag);
-    }
+        const container = document.getElementById('container');
+        if (!container) return;
+        let flag = document.getElementById('flag');
+        if (!flag) {
+            flag = document.createElement('div');
+            flag.id = 'flag';
+            container.appendChild(flag);
+        }
 
-    const message = localStorage.getItem('safetyMessage');
-    console.log('Rendering flag with message:', message); // Debugging line
+        const message = localStorage.getItem('safetyMessage');
+        console.log('Rendering flag with message:', message); 
 
-    if (message === 'finished') {
-        removeCheckeredFlag(); // Ensure no previous flags are present
-        createCheckeredFlag(flag);
-    } else if (message === 'danger') {
-        removeCheckeredFlag(); // Ensure no previous flags are present
-        flag.style.backgroundColor = flag_colors.get('danger');
-    } else {
-        removeCheckeredFlag(); // Ensure no previous flags are present
-        flag.style.backgroundColor = flag_colors.get(message) || 'transparent'; // Fallback to transparent
+        removeCheckeredFlag(); 
+        if (message === 'finished') {
+            createCheckeredFlag(flag);
+        } else {
+            flag.style.backgroundColor = flag_colors.get(message) || 'transparent'; 
+        }
     }
-}
 
     function updateLapTime(car) {
         const now = Date.now();
@@ -200,6 +196,7 @@
     socket.on('start:race', () => {
         const countdown = document.getElementById('countdown');
         countdown.classList.remove('hidden');
+        localStorage.setItem('safetyMessage', 'safe');
         renderFlag();
     });
 
