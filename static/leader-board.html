@@ -163,30 +163,18 @@
         };
         localStorage.setItem(car.toString(), JSON.stringify(obj));
     }
-
+    
     function reloadCountdown() {
-        if (localStorage.getItem('raceFinished') === 'true') {
-            timeRemaining.seconds = -1;
-        } else {
-            timeRemaining.seconds = getTimeRemaining();
-        }
-        updateCountdown(timeRemaining);
         const countdown = document.getElementById('countdown');
         countdown.classList.remove('hidden');
     }
 
-    function getTimeRemaining() {
-        const startTime = parseInt(localStorage.getItem('startTime'));
-        const timeSinceRaceStart = Math.floor((Date.now() - startTime) / 1000);
-        return countdownTime - timeSinceRaceStart;
-    }
-
     function reloadState() {
-    populateDriverData();
-    renderFlag(); // Render flag based on current safetyMessage
-    reloadDrivers();
-    reloadCountdown();
-}
+        populateDriverData();
+        renderFlag();
+        reloadDrivers();
+        reloadCountdown();
+    }
 
     socket.on('devMode', (data) => {
         if (!data.isDevMode) {
@@ -212,7 +200,6 @@
     socket.on('start:race', () => {
         const countdown = document.getElementById('countdown');
         countdown.classList.remove('hidden');
-        updateCountdown(timeRemaining);
         renderFlag();
     });
 
@@ -237,9 +224,12 @@
         storeDriverData(car);
     });
 
-    socket.on('finish:race', ()=> {
-        timeRemaining.seconds = -1;
-        updateCountdown(timeRemaining);
+    socket.on('countdown', (time) => {
+        updateCountdown(time);
+    });
+
+    socket.on('finish:race', () => {
+        updateCountdown(-1);
         localStorage.setItem('raceFinished', 'true');
     });
 
@@ -253,8 +243,7 @@
         //Checking if there is an ongoing race
         if (localStorage.length > 0) {
             if (localStorage.getItem('raceFinished') === 'true') {
-                timeRemaining.seconds = -1;
-                updateCountdown(timeRemaining);
+                updateCountdown(-1);
             } else {
                 timeRemaining.seconds = getTimeRemaining();
                 updateCountdown(timeRemaining);
@@ -262,7 +251,6 @@
             reloadState();
         }
     });
-
 
     document.addEventListener("DOMContentLoaded", () => {
     });
