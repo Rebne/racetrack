@@ -94,7 +94,7 @@
     const safeButton = controlButtons.querySelector('[data-flag="safe"]');
     safeButton.classList.add('active');
     localStorage.setItem('safetyMessage', 'safe');
-    socket.emit('remove:race'); // Ensure this event is correctly broadcast
+    socket.emit('remove:race');
     console.log('Emitted remove:race event');
 }
 

@@ -251,7 +251,8 @@
             socket = io();
 
             socket.on('remove:race', () => {
-                if (window.races && window.races.length > 0) {
+                console.log('Received remove:race event');
+                    if (window.races && window.races.length > 0) {
                 const nextRace = window.races.shift();
                 removeRaceDiv(nextRace.id);
             }
