@@ -206,12 +206,21 @@ io.on('connection', (socket) => {
   socket.on('start:race', async () => {
     try {
       const raceID = await getNextRace();
+      if (raceID === -1) {
+        socket.emit('race:error', { message: 'No races available to start.' });
+        return;
+      }
       const race = await getRaceData(raceID);
+      if (race.drivers.length < 2) {
+        socket.emit('race:error', { message: 'At least 2 racers are required to start a race.' });
+        return;
+      }
       io.emit('race:data', race);
       deleteRaceLocally(raceID);
-      io.emit('remove:race')
+      io.emit('remove:race');
     } catch (error) {
       console.error('Error emitting race:data', error);
+      socket.emit('race:error', { message: 'An error occurred while starting the race.' });
     }
   });
 

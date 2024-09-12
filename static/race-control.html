@@ -99,8 +99,7 @@
         
         startButton.addEventListener('click', () => {
             localStorage.clear();
-            startNewRace();
-            localStorage.setItem('startTime', Date.now().toString());
+            socket.emit('start:race');
         });
 
         buttons.forEach(button => {
@@ -141,6 +140,8 @@
         socket.on('race:data', (raceData) => {
             console.log(raceData);
             setDriversInLocalStorage(raceData.drivers);
+            startNewRace();
+            localStorage.setItem('startTime', Date.now().toString());
         });
 
         socket.on('driver:added', (data) => {
@@ -163,7 +164,6 @@
             const safeButton = controlButtons.querySelector('[data-flag="safe"]');
             safeButton.classList.add('active');
             localStorage.setItem('safetyMessage', 'safe');
-            socket.emit('start:race');
             socket.emit('remove:race');
         }
 
@@ -212,6 +212,11 @@
                     break;
             }
         }
+
+        socket.on('race:error', (data) => {
+            alert(data.message);
+            displayStartButton();
+        });
     });
 
 </script>
@@ -281,6 +286,5 @@
     }
 </style>
 </html>
-
 
 
