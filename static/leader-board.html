@@ -42,29 +42,16 @@
     }
 
     function lapTimeAsString(ms) {
-        if (ms === Number.MAX_VALUE) {return '00:00.0';}
-        let result = '';
-        const roundedSeconds = Math.round(ms / 1000);
-        const minutes = Math.floor(roundedSeconds / 60);
-        const seconds = roundedSeconds % 60;
+        if (ms === Number.MAX_VALUE) return '00:00.0';
+        
+        const minutes = Math.floor(ms / 60000);
+        const seconds = Math.floor((ms % 60000) / 1000);
         const millis = Math.floor((ms % 1000) / 100);
         
-        //min
-        if (minutes >= 10) {
-            result += minutes.toString();
-        } else {
-            result += '0' + minutes.toString();
-        }
-        result += ':';
-        //sec
-        if (seconds >= 10) {
-            result += seconds.toString();
-        } else {
-            result += '0' + seconds.toString();
-        }
-        //ms
-        result += '.' + millis.toString();
-        return result;
+        const paddedMinutes = minutes.toString().padStart(2, '0');
+        const paddedSeconds = seconds.toString().padStart(2, '0');
+        
+        return `${paddedMinutes}:${paddedSeconds}.${millis}`;
     }
 
     function populateDriverData() {
@@ -89,6 +76,7 @@
         removeDrivers();
         const carsInOrder = carsSortedByLapTime(bestLapTimes);
         const container = document.getElementById('container');
+        console.log(carsInOrder);
 
         carsInOrder.forEach(car => {
             const name = carNameMap.get(car);
