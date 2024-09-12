@@ -104,8 +104,6 @@
     }
 
     function initializeDrivers(drivers, startTime) {
-        // Initialize last lap to start time for comparison
-        // +1 is added to length to be able to index with car numbers without changing them
         lastLapTimestamp = new Array(drivers.length + 1).fill(startTime);
         currentLapCount = new Array(drivers.length + 1).fill(1); 
 
@@ -123,12 +121,29 @@
     }
 
     function renderFlag() {
-        const container = document.getElementById('container');
-        if (!container) return;
-        const flag = document.createElement('div');
+    const container = document.getElementById('container');
+    if (!container) return;
+    let flag = document.getElementById('flag');
+    if (!flag) {
+        flag = document.createElement('div');
         flag.id = 'flag';
         container.appendChild(flag);
     }
+
+    const message = localStorage.getItem('safetyMessage');
+    console.log('Rendering flag with message:', message); // Debugging line
+
+    if (message === 'finished') {
+        removeCheckeredFlag(); // Ensure no previous flags are present
+        createCheckeredFlag(flag);
+    } else if (message === 'danger') {
+        removeCheckeredFlag(); // Ensure no previous flags are present
+        flag.style.backgroundColor = flag_colors.get('danger');
+    } else {
+        removeCheckeredFlag(); // Ensure no previous flags are present
+        flag.style.backgroundColor = flag_colors.get(message) || 'transparent'; // Fallback to transparent
+    }
+}
 
     function updateLapTime(car) {
         const now = Date.now();
@@ -167,19 +182,11 @@
     }
 
     function reloadState() {
-        populateDriverData();
-        renderFlag();
-        const flag = document.getElementById('flag');
-        const message = localStorage.getItem('safetyMessage');
-        if (message == 'finished') {
-            createCheckeredFlag(flag);
-        } else {
-            removeCheckeredFlag();
-            flag.style.backgroundColor = flag_colors.get(message);
-        }
-        reloadDrivers(); 
-        reloadCountdown();
-    }
+    populateDriverData();
+    renderFlag(); // Render flag based on current safetyMessage
+    reloadDrivers();
+    reloadCountdown();
+}
 
     socket.on('devMode', (data) => {
         if (!data.isDevMode) {

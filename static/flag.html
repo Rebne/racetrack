@@ -1,27 +1,52 @@
 <!doctype html>
-<html>
-  <head>
-    <title>Race flags</title>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Race Flags</title>
     <script src="/socket.io/socket.io.js"></script>
     <script src="../flag.js"></script>
-    <script>
-        let flag;
-        function renderFlag(message) {
-            const color = flag_colors.get(message);
-            if (message == 'finished') {
-                createCheckeredFlag(flag);
-            } else {
-                removeCheckeredFlag();
-                flag.style.backgroundColor = color;
-            }
-            localStorage.setItem('safetyMessage', message);
+    <style>
+        html, body {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden; /* Prevent scrolling */
         }
 
+        #flag {
+            width: 100vw; /* Full viewport width */
+            height: 100vh; /* Full viewport height */
+            display: flex;
+            flex-wrap: wrap;
+            position: absolute; /* Position absolutely to cover entire screen */
+            top: 0;
+            left: 0;
+            background-color: transparent; /* Ensure transparent background */
+        }
+    </style>
+</head>
+<body>
+    <div id="flag"></div>
+    <script>
         document.addEventListener("DOMContentLoaded", () => {
-            flag = document.body;
+            const flag = document.getElementById('flag'); // Get the flag container
             const socket = io();
 
+            function renderFlag(message) {
+                const color = flag_colors.get(message);
+                if (message === 'finished') {
+                    createCheckeredFlag(flag);
+                } else {
+                    removeCheckeredFlag();
+                    flag.style.backgroundColor = color;
+                }
+                localStorage.setItem('safetyMessage', message);
+            }
+
             socket.on('connect', () => {
+                console.log('Connected to server');
                 const safetyMessage = localStorage.getItem('safetyMessage');
                 if (safetyMessage) {
                     renderFlag(safetyMessage);
@@ -29,29 +54,15 @@
             });
 
             socket.on('start:race', () => {
+                console.log('Start race event received');
                 renderFlag('safe');
             });
-            
+
             socket.on('flag:swap', (message) => {
+                console.log('Flag swap event received with message:', message); // Debugging line
                 renderFlag(message);
             });
         });
     </script>
-    <style>
-        body {
-            margin: 0;
-            padding: 0;
-            width: 100vw;
-            height: 100vh;
-            display: flex;
-            flex-wrap: wrap;
-            background-color: grey;
-        }
-        .hidden {
-            display: none;
-        }
-    </style>
-  </head>
-  <body>
-  </body>
+</body>
 </html>
