@@ -56,13 +56,15 @@
         socket.on('connect', () => {
             console.log('Connected to server');
         });
+
+        socket.on('race:end', ()=>{
+            const message = document.querySelector('#message');
+            message.innerHTML = '';
+        });
         
         socket.on('finish:race', ()=>{
-            const message = document.createElement('div');
-            message.id = 'message';
-            message.innerHTML = `
-            <p>Please proceed to the paddock</p>`;
-            document.body.appendChild(message);
+            const message = document.querySelector('#message');
+            message.innerHTML = `<p>Please proceed to the paddock</p>`;
         });
 
         socket.on('start:race', ()=> {
@@ -89,11 +91,13 @@
 </head>
 <body>
     <div id="next-race"></div>
+    <div id="message"></div>
 </body>
 <style>
     body {
         font-family: Arial;
         display: flex;
+        flex-direction: column;
         justify-content: center;
         align-items: center;
         min-height: 100vh;
