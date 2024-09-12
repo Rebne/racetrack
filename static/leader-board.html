@@ -161,11 +161,17 @@
     }
 
     socket.on('devMode', (data) => {
-        if (!data.isDevMode) {
-            return;
+        if (!data.isDevMode) return;
+        if (localStorage.length > 0) {
+            const raceFinished = localStorage.getItem('raceFinished') === 'true';
+            const countdown = document.getElementById('countdown');
+            if (raceFinished) {
+                updateCountdown(-1);
+            } else {
+                countdown.textContent = '1:00';
+            }
+            reloadState();
         }
-        const timer = document.getElementById('countdown');
-        timer.textContent = '1:00';
     });
     
     socket.on('race:data', (raceData) => {
@@ -218,13 +224,6 @@
 
     socket.on('connect', () => {
         console.log('Connected to server');
-        //Checking if there is an ongoing race
-        if (localStorage.length > 0) {
-            if (localStorage.getItem('raceFinished') === 'true') {
-                updateCountdown(-1);
-            } 
-            reloadState();
-        }
     });
 
     document.addEventListener("DOMContentLoaded", () => {
