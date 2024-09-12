@@ -252,10 +252,10 @@
 
             socket.on('remove:race', () => {
                 if (window.races && window.races.length > 0) {
-                    const nextRace = window.races.shift();
-                    removeRaceDiv(nextRace.id);
-                }
-            });
+                const nextRace = window.races.shift();
+                removeRaceDiv(nextRace.id);
+            }
+        });
 
             readAllRacesFromDB().then(function (result) {
                 window.races = result || []; 
