@@ -196,7 +196,7 @@ let countdownTime;
 function startCountdown(duration) {
   countdownTime = duration;
   clearTimeout(countdownTimer);
-  
+
   function tick() {
     io.emit('countdown', countdownTime);
     if (countdownTime <= 0) {
@@ -207,7 +207,6 @@ function startCountdown(duration) {
       countdownTimer = setTimeout(tick, 1000);
     }
   }
-  
   tick();
 }
 
@@ -232,6 +231,11 @@ io.on('connection', (socket) => {
   socket.on('lap-recorded', (data) => {
     console.log(`Lap recorded for car: ${data.carName}`);
   });
+
+  socket.on('finish:race', () => {
+    clearTimeout(countdownTimer);
+  });
+
 
   socket.on('start:race', async () => {
     try {

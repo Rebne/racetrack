@@ -4,13 +4,12 @@
     <title>Race countdown</title>
     <style>
         body {
-            font-family: Arial;
+            font-family: Arial, sans-serif;
             display: flex;
             justify-content: center;
             align-items: center;
             height: 100vh;
             margin: 0;
-            font-family: Arial, sans-serif;
         }
 
         #countdown {
@@ -20,60 +19,37 @@
     </style>
 </head>
 <body>
-<div id="countdown">10:00</div>
+<div id="countdown"></div>
 <script src="/socket.io/socket.io.js"></script>
 <script src="../countdown.js"></script>
 <script>
-    function getTimeRemaining() {
-        const startTime = parseInt(localStorage.getItem('startTime'));
-        const timeSinceRaceStart = Math.floor((Date.now() - startTime) / 1000);
-        return countdownTime - timeSinceRaceStart;
-    }
-
     const socket = io();
-    //converted timeRemaining to object because cant send integer/number as reference to a function
-    let countdownTime = 10 * 60;
-    let timeRemaining = {seconds: countdownTime};
+    let devMode = false;
 
     socket.on('devMode', (data) => {
-        if (!data.isDevMode) {
-            return;
-        }
-        countdownTime = 1 * 60;
-        if (localStorage.length > 0) {
-            timeRemaining.seconds = getTimeRemaining();
-        } else {
-            timeRemaining.seconds = countdownTime;
-        }
-        //swapping to 1:00 for idle value
-        const timer = document.getElementById('countdown');
-        timer.textContent = '1:00';
-        document.title = 'Race countdown (Dev Mode)';
-    });
-
-    socket.on('finish:race', () => {
-        timeRemaining.seconds = -1;
-        updateCountdown(timeRemaining);
-    });
-
-    socket.on('connect', () => {
-        console.log('Connected to server');
-        // When the race is ongoing
-        if (localStorage.length > 0) {
+        devMode = data.isDevMode;
+        if (devMode) {
+            document.title = 'Race countdown (Dev Mode)';
             if (localStorage.getItem('raceFinished') === 'true') {
-                updateCountdown({seconds: -1});
+                updateCountdown(-1);
                 return;
             }
-            timeRemaining.seconds = getTimeRemaining();
-            updateCountdown(timeRemaining);
         }
+        updateTimer();
     });
 
-    socket.on('start:race', () => {
-        console.log('Race started');
-        timeRemaining.seconds = countdownTime;
-        updateCountdown(timeRemaining); // Start the countdown
-    });
+    socket.on('finish:race', () => updateCountdown(-1));
+
+    socket.on('connect', () => console.log('Connected to server'));
+
+    socket.on('countdown', updateCountdown);
+
+    socket.on('race:end', updateTimer);
+
+    function updateTimer() {
+        const timer = document.getElementById('countdown');
+        timer.textContent = devMode ? '1:00' : '10:00';
+    }
 </script>
 </body>
 </html>
