@@ -18,25 +18,25 @@
 
 ## Race Control and Flags
 - [ ] Prevent flag changes for completed races in Race-Control view
-- [ ] Review and potentially remove "None" flag option in Race-Control view
-- [ ] Update leaderboard flag display when race-control sets race to "Finish" state
-- [ ] Implement proper race start conditions (e.g., minimum number of racers)
+- [x] Review and potentially remove "None" flag option in Race-Control view
+- [x] Update leaderboard flag display when race-control sets race to "Finish" state
+- [x] Implement proper race start conditions (e.g., minimum number of racers)
 - [ ] Fix leaderboard flag display inconsistencies between races (Null flag error)
 
 ## Interface Updates
 - [x] Update Front-desk view in real-time when race is started in race-control
 - [x] Fix race reset issue when timer runs out but race is not marked as finished
-- [ ] Prevent non-existing races from being started
+- [x] Prevent non-existing races from being started
 
 ## Compliance Issues
-- [ ] Implement proper race mode changes and UI updates:
+- [x] Implement proper race mode changes and UI updates:
   - [x] Race controls should disappear and "end race" button should appear when race mode changes to "Finish"
-  - [ ] Broadcast all race state changes through sockets in real-time
-  - [ ] Ensure race sessions disappear from Front Desk interface once safe to start
+  - [x] Broadcast all race state changes through sockets in real-time
+  - [x] Ensure race sessions disappear from Front Desk interface once safe to start
   - [x] Change race mode to "Danger" when race session is ended
-  - [ ] Update Lap-Line Observer interface in real-time when race session starts
-  - [ ] Disable or hide buttons between races in Lap-Line Tracker
-  - [ ] Hide "Start race" button when no more races are in queue
+  - [x] Update Lap-Line Observer interface in real-time when race session starts
+  - [x] Disable or hide buttons between races in Lap-Line Tracker
+  - [x] Hide "Start race" button when no more races are in queue
 
 ## Network Accessibility
 - [x] Make interfaces accessible from external networks:
