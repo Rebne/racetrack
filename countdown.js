@@ -4,15 +4,10 @@ function formatTime(seconds) {
     return `${minutes}:${secs < 10 ? '0' : ''}${secs}`;
 }
 
-function updateCountdown(timeRemaining) {
+function updateCountdown(time) {
     const countdownElement = document.getElementById('countdown');
-    countdownElement.textContent = formatTime(timeRemaining.seconds);
-
-    if (timeRemaining.seconds > 0) {
-        timeRemaining.seconds--;
-        setTimeout(function() {
-            updateCountdown(timeRemaining);
-        }, 1000);
+    if (time > 0) {
+        countdownElement.textContent = formatTime(time);
     } else {
         countdownElement.textContent = "Race Over";
     }
