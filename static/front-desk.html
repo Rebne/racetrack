@@ -200,8 +200,9 @@
             editButton.className = 'edit-driver-button driver-button';
             editButton.textContent = 'Edit';
             editButton.addEventListener('click', () => {
-                const driverInput = setDriverForEdit(race, driver)
-                removeDriverDiv(race, driver);
+                const driverInput = setDriverForEdit(race, driver);
+                race.removeDriver(driver.name); 
+                updateRaceDisplay(race);
                 deleteDriverInDB(driver.name);
                 driverInput.focus();
             });

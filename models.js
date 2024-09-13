@@ -60,6 +60,7 @@ class Race {
         const removedDriver = this.drivers.find(driver => driver.name === name);
         if (removedDriver) {
             this.availableCars.push(removedDriver.car);
+            this.availableCars.sort((a, b) => b - a);
             this.drivers = this.drivers.filter(driver => driver.name !== name);
         }
         return this.drivers.length !== initialLength;
