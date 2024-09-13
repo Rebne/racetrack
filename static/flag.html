@@ -12,18 +12,18 @@
             padding: 0;
             width: 100%;
             height: 100%;
-            overflow: hidden; /* Prevent scrolling */
+            overflow: hidden;
         }
 
         #flag {
-            width: 100vw; /* Full viewport width */
-            height: 100vh; /* Full viewport height */
+            width: 100vw;
+            height: 100vh;
             display: flex;
             flex-wrap: wrap;
-            position: absolute; /* Position absolutely to cover entire screen */
+            position: absolute;
             top: 0;
             left: 0;
-            background-color: transparent; /* Ensure transparent background */
+            background-color: transparent;
         }
     </style>
 </head>
@@ -31,7 +31,7 @@
     <div id="flag"></div>
     <script>
         document.addEventListener("DOMContentLoaded", () => {
-            const flag = document.getElementById('flag'); // Get the flag container
+            const flag = document.getElementById('flag'); 
             const socket = io();
 
             function renderFlag(message) {

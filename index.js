@@ -228,6 +228,7 @@ io.on('connection', (socket) => {
 
   socket.on('finish:race', () => {
     clearTimeout(countdownTimer);
+    io.emit('flag:swap', 'finished');
   });
 
 
