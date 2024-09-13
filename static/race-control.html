@@ -178,6 +178,10 @@
         localStorage.setItem('raceFinished', 'true');
     });
 
+    socket.on('race:end', () => {
+        localStorage.clear();
+    });
+
     document.addEventListener("DOMContentLoaded", () => {
         startButton = document.querySelector('.start-button');
         controlButtons = document.querySelector('.control-buttons');
@@ -214,7 +218,6 @@
         endRaceSessionButton.addEventListener('click', () => {
             displayStartButton();
             socket.emit('race:end');
-            localStorage.clear();
         });
 
         if (localStorage.length > 0) {
