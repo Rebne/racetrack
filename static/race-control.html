@@ -90,12 +90,11 @@
     }
 
     function startNewRace() {
-    displayControlButtons();
-    const safeButton = controlButtons.querySelector('[data-flag="safe"]');
-    safeButton.classList.add('active');
-    localStorage.setItem('safetyMessage', 'safe');
-    socket.emit('remove:race');
-}
+        displayControlButtons();
+        const safeButton = controlButtons.querySelector('[data-flag="safe"]');
+        safeButton.classList.add('active');
+        localStorage.setItem('safetyMessage', 'safe');
+    }
 
     function displayControlButtons() {
         hideNextRace();
