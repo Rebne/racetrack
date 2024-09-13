@@ -13,8 +13,8 @@
     let raceStartTime;
     const bestLapTimes = new Map();
     const carNameMap = new Map();
-    let currentLapCount;
-    let lastLapTimestamp;
+    let lastLapTimestamp = new Array(9).fill(0);
+    currentLapCount = new Array(9).fill(1);
     let countdownTime = 10 * 60;
     //this is an object because int/number cannot be passed to a function as a reference
     let timeRemaining = {seconds: countdownTime};
