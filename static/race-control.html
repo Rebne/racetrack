@@ -29,6 +29,7 @@
 <script>
     const socket = io();
     let startButton, controlButtons, endRaceSessionButton, buttons;
+    let finishButtonClicked = false;
 
     async function getNextRace() {
         races = await getRacesInDB();
@@ -93,6 +94,8 @@
         const safeButton = controlButtons.querySelector('[data-flag="safe"]');
         safeButton.classList.add('active');
         localStorage.setItem('safetyMessage', 'safe');
+        finishButtonClicked = false;
+        buttons.forEach(button => button.disabled = false);
     }
 
     function displayControlButtons() {
@@ -199,6 +202,8 @@
                 socket.emit('flag:swap', message);
                 localStorage.setItem('safetyMessage', message);
                 if (message === 'finished') {
+                    finishButtonClicked = true;
+                    button.disabled = true;
                     socket.emit('finish:race');
                 }
             });
