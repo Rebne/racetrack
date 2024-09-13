@@ -7,7 +7,6 @@
     <script src="/socket.io/socket.io.js"></script>
     <script src="../flag.js"></script>
     <script src="../countdown.js"></script>
-    <script src="../helpers.js"></script>
     <script>
     
     //GLOBAL variables
@@ -21,6 +20,12 @@
     let timeRemaining = {seconds: countdownTime};
 
     const socket = io();
+
+
+    function isStringNumber(str) {
+        const num = Number(str);
+        return str === String(num);
+    }
 
     function carsSortedByLapTime(map) {
         return Array.from(map.entries())
@@ -133,7 +138,7 @@
         lastLapTimestamp[car] = now;
         const current = now - prev;
         const prevBest = bestLapTimes.get(car);
-        bestLapTimes.set(car, min(current, prevBest));
+        bestLapTimes.set(car, Math.min(current, prevBest));
     }
 
     function storeDriverData(car) {

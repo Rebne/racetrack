@@ -6,10 +6,15 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Lap-Line Tracker</title>
 <script src="/socket.io/socket.io.js"></script>
-<script src="../helpers.js"></script>
 <script>
 
     const socket = io();
+
+
+    function isStringNumber(str) {
+        const num = Number(str);
+        return str === String(num);
+    }
 
     function createTutorial() {
         const tutorial = document.createElement('div');

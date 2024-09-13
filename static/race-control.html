@@ -6,7 +6,6 @@
     <title>Race Control</title>
     <script src="/socket.io/socket.io.js"></script>
     <script src="../fetchdata.js"></script>
-    <script src="../helpers.js">    </script>
 </head>
 <body>
 <div class="container">
@@ -38,7 +37,7 @@
         };
         nextRace = races[0].id;
         for (const row of races) {
-            nextRace = min(nextRace, row.id);
+            nextRace = Math.min(nextRace, row.id);
         }
         return nextRace
     }
