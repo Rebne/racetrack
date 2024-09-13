@@ -13,8 +13,8 @@
     let raceStartTime;
     const bestLapTimes = new Map();
     const carNameMap = new Map();
-    let lastLapTimestamp = new Array(9).fill(0);
-    currentLapCount = new Array(9).fill(1);
+    let lastLapTimestamp;
+    let currentLapCount;
     let countdownTime = 10 * 60;
     //this is an object because int/number cannot be passed to a function as a reference
     let timeRemaining = {seconds: countdownTime};
@@ -88,7 +88,7 @@
             driverDiv.id = car;
             driverDiv.className = 'driver';
             const lapTime = bestLapTimes.get(car);
-            const numLap = currentLapCount[car].toString();
+            const numLap = currentLapCount[car] || 1;
             driverDiv.textContent = `Best lap: ${lapTimeAsString(lapTime)} Name: ${name} Car: ${car} Current lap: ${numLap}`;
 
             container.appendChild(driverDiv);
@@ -179,6 +179,10 @@
     
     socket.on('race:data', (raceData) => {
         raceStartTime = parseInt(localStorage.getItem('startTime'));
+        if (!raceStartTime) {
+            raceStartTime = Date.now();
+            localStorage.setItem('startTime', raceStartTime.toString());
+        }
         initializeDrivers(raceData.drivers, raceStartTime);
     });
 

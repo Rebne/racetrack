@@ -151,7 +151,9 @@
     socket.on('race:data', (raceData) => {
         setDriversInLocalStorage(raceData.drivers);
         startNewRace();
-        localStorage.setItem('startTime', Date.now().toString());
+        if (!localStorage.getItem('startTime')) {
+            localStorage.setItem('startTime', Date.now().toString());
+        }
     });
 
     socket.on('driver:added', (data) => {
