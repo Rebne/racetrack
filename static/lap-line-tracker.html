@@ -33,11 +33,14 @@
 
     function removeButtons() {
         const buttons = document.getElementById('active');
-        buttons.remove();
+        if (buttons) {
+            buttons.remove();
+        }
     }
 
     // Function to create buttons dynamically
     function createButtons(drivers) {
+        removeButtons();
         const buttonWrapper = document.createElement('div');
         buttonWrapper.className = 'active';
         buttonWrapper.id = 'active';
@@ -76,26 +79,23 @@
     }
 
     document.addEventListener("DOMContentLoaded", () => {
-        if (localStorage.length > 0) {
+        if (localStorage.length > 0 && localStorage.getItem('raceFinished') !== 'true'){
             drivers = getDriverData();
             createButtons(drivers);
         } else {
             createTutorial();
         }
 
-        // Handle race start event
         socket.on('race:data', (raceData) => {
             removeTutorial();
             createButtons(raceData.drivers);
         });
 
-        //handle race end event
         socket.on('finish:race', ()=> {
             removeButtons();
             createTutorial();
         });
 
-        // Request current race data when connected, in case the race has already started
         socket.emit('request:current-race');
         socket.on('current:race', (raceData) => {
             if (raceData.cars && raceData.cars.length > 0) {
